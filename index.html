@@ -44,15 +44,21 @@
         .stats-card p { font-size: 1.2em; margin: 5px 0; color: var(--secondary); }
         #current-status { margin-top: 15px; font-weight: bold; padding: 10px; border-radius: 5px; background: rgba(0,0,0,0.2); }
         
-        /* TIMELINE STYLES */
+        /* NEW TIMELINE STYLES */
         .timeline-container { background-color: var(--panel-bg); padding: 20px; border-radius: 8px; margin-bottom: 20px; }
-        .timeline-container h3 { margin-top: 0; margin-bottom: 15px; text-align: center;}
-        .timeline-bar { position: relative; height: 35px; background-color: rgba(0,0,0,0.4); border-radius: 6px; margin-bottom: 5px; overflow: hidden;}
-        .timeline-sleep-block { position: absolute; height: 100%; top: 0; background-color: var(--sleep-color); opacity: 0.85; border-radius: 4px; border-left: 1px solid rgba(255,255,255,0.2); border-right: 1px solid rgba(255,255,255,0.2); box-sizing: border-box;}
+        .timeline-container h3 { margin-top: 0; margin-bottom: 10px; text-align: center;}
         
-        /* Updated Labels for every hour */
-        .timeline-labels { display: flex; justify-content: space-between; font-size: 0.65em; color: #888; font-weight: bold;}
-        .timeline-labels span { text-align: center; width: 12px; display: inline-block; }
+        .timeline-wrapper { position: relative; margin-top: 15px; margin-bottom: 15px; }
+        
+        .dynamic-labels { position: relative; height: 20px; width: 100%; }
+        .dynamic-label { position: absolute; transform: translateX(-50%); font-size: 0.85em; font-weight: bold; bottom: 2px; text-shadow: 1px 1px 2px #000; z-index: 5;}
+        
+        .timeline-bar { position: relative; height: 35px; background-color: rgba(0,0,0,0.4); border-radius: 6px; margin: 5px 0; }
+        .timeline-sleep-block { position: absolute; height: 100%; top: 0; background-color: var(--sleep-color); opacity: 0.85; border-radius: 4px; z-index: 1;}
+        .hour-tick { position: absolute; bottom: 0; width: 1px; height: 8px; background-color: rgba(255,255,255,0.3); z-index: 2; }
+        
+        .fixed-labels { position: relative; height: 20px; width: 100%; font-size: 0.75em; color: #888; font-weight: bold;}
+        .fixed-label { position: absolute; transform: translateX(-50%); }
 
         .input-group { background-color: var(--panel-bg); padding: 20px; border-radius: 8px; margin-bottom: 20px; display: flex; gap: 15px; flex-wrap: wrap; align-items: flex-end; justify-content: center;}
         .input-group div { display: flex; flex-direction: column; }
@@ -105,13 +111,18 @@
 
                 <div class="timeline-container">
                     <h3>24-Hour Timeline</h3>
-                    <div class="timeline-bar" id="timeline-bar">
+                    <div class="timeline-wrapper">
+                        <div class="dynamic-labels" id="dynamic-labels"></div>
+                        
+                        <div class="timeline-bar" id="timeline-bar"></div>
+                        
+                        <div class="fixed-labels">
+                            <span class="fixed-label" style="left: 0%;">12a</span>
+                            <span class="fixed-label" style="left: 25%;">6a</span>
+                            <span class="fixed-label" style="left: 50%;">12p</span>
+                            <span class="fixed-label" style="left: 75%;">6p</span>
+                            <span class="fixed-label" style="left: 100%;">12a</span>
                         </div>
-                    <div class="timeline-labels">
-                        <span>12a</span><span>1a</span><span>2a</span><span>3a</span><span>4a</span><span>5a</span>
-                        <span>6a</span><span>7a</span><span>8a</span><span>9a</span><span>10a</span><span>11a</span>
-                        <span>12p</span><span>1p</span><span>2p</span><span>3p</span><span>4p</span><span>5p</span>
-                        <span>6p</span><span>7p</span><span>8p</span><span>9p</span><span>10p</span><span>11p</span><span>12a</span>
                     </div>
                 </div>
 
@@ -174,7 +185,6 @@
             if (!timeVal) return alert("Must enter a time.");
             
             const [hours, minutes] = timeVal.split(':').map(Number);
-            
             const eventDate = new Date(viewDate.getFullYear(), viewDate.getMonth(), viewDate.getDate(), hours, minutes);
             
             events.push({
@@ -235,15 +245,47 @@
                 }
             }
 
-            // Calculations
+            // Calculations Setup
             const dayStart = new Date(viewDate.getFullYear(), viewDate.getMonth(), viewDate.getDate(), 0, 0, 0).getTime();
             const dayEnd = new Date(viewDate.getFullYear(), viewDate.getMonth(), viewDate.getDate(), 23, 59, 59).getTime();
             const totalMsInDay = dayEnd - dayStart;
 
-            let dailySleepMs = 0;
             const timelineBar = document.getElementById('timeline-bar');
+            const dynamicLabels = document.getElementById('dynamic-labels');
             timelineBar.innerHTML = ''; 
-            
+            dynamicLabels.innerHTML = '';
+
+            // Render 24 hour tick marks inside the bar
+            for (let i = 0; i <= 24; i++) {
+                const tick = document.createElement('div');
+                tick.className = 'hour-tick';
+                tick.style.left = `${(i / 24) * 100}%`;
+                timelineBar.appendChild(tick);
+            }
+
+            // Render Dynamic Logged Events (Numbers over the bar)
+            sortedEvents.forEach(ev => {
+                // Ensure the event actually falls within the currently viewed day
+                if (ev.timestamp >= dayStart && ev.timestamp <= dayEnd) {
+                    const evDate = new Date(ev.timestamp);
+                    let hourNumber = evDate.getHours() % 12;
+                    if (hourNumber === 0) hourNumber = 12; // Handle midnight/noon formatting
+                    
+                    const leftPercentage = ((ev.timestamp - dayStart) / totalMsInDay) * 100;
+                    
+                    const label = document.createElement('span');
+                    label.className = 'dynamic-label';
+                    label.style.left = `${leftPercentage}%`;
+                    label.innerText = hourNumber;
+                    // Color code it based on sleep vs wake
+                    label.style.color = ev.type === 'sleep' ? 'var(--sleep-color)' : 'var(--wake-color)';
+                    
+                    dynamicLabels.appendChild(label);
+                }
+            });
+
+            // Render Sleep Blocks
+            let dailySleepMs = 0;
             sleepBlocks.forEach(block => {
                 const blockStart = block.start;
                 const blockEnd = block.end ? block.end : now; 
