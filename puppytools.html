@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master Dashboard</title>
+    <style>
+        :root {
+            --bg-color: #1e1e2e;
+            --panel-bg: #282a36;
+            --text-color: #f8f8f2;
+            --primary: #bd93f9;
+            --secondary: #ff79c6;
+            --border: #44475a;
+            --sleep-color: #8be9fd;
+            --wake-color: #f1fa8c;
+        }
+        body, html {
+            margin: 0; padding: 0; height: 100%;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color); color: var(--text-color);
+        }
+        
+        #dashboard { display: flex; height: 100%; flex-direction: column; }
+        .tabs {
+            display: flex; background-color: var(--panel-bg); padding: 10px; gap: 10px;
+            border-bottom: 2px solid var(--border);
+        }
+        .tab-btn {
+            padding: 10px 20px; background-color: transparent; color: var(--text-color);
+            border: 1px solid var(--border); border-radius: 5px; cursor: pointer; transition: 0.2s;
+        }
+        .tab-btn.active { background-color: var(--primary); border-color: var(--primary); }
+        .tab-content { display: none; flex-grow: 1; height: 100%; overflow-y: auto;}
+        .tab-content.active { display: flex; flex-direction: column; }
+        iframe { width: 100%; height: 100%; border: none; }
+
+        .tracker-container { padding: 20px; max-width: 800px; margin: 0 auto; width: 100%; box-sizing: border-box; }
+        .header-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .header-controls button { background-color: var(--panel-bg); color: var(--text-color); border: 1px solid var(--border); padding: 5px 15px; border-radius: 5px; cursor: pointer; }
+        
+        .stats-card { background-color: var(--panel-bg); padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 20px; position: relative;}
+        .stats-card h2 { margin: 0 0 10px 0; }
+        .stats-card p { font-size: 1.2em; margin: 5px 0; color: var(--secondary); }
+        #current-status { margin-top: 15px; font-weight: bold; padding: 10px; border-radius: 5px; background: rgba(0,0,0,0.2); }
+        
+        /* TIMELINE STYLES */
+        .timeline-container { background-color: var(--panel-bg); padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+        .timeline-container h3 { margin-top: 0; margin-bottom: 15px; text-align: center;}
+        .timeline-bar { position: relative; height: 35px; background-color: rgba(0,0,0,0.4); border-radius: 6px; margin-bottom: 5px; overflow: hidden;}
+        .timeline-sleep-block { position: absolute; height: 100%; top: 0; background-color: var(--sleep-color); opacity: 0.85; border-radius: 4px; border-left: 1px solid rgba(255,255,255,0.2); border-right: 1px solid rgba(255,255,255,0.2); box-sizing: border-box;}
+        
+        /* Updated Labels for every hour */
+        .timeline-labels { display: flex; justify-content: space-between; font-size: 0.65em; color: #888; font-weight: bold;}
+        .timeline-labels span { text-align: center; width: 12px; display: inline-block; }
+
+        .input-group { background-color: var(--panel-bg); padding: 20px; border-radius: 8px; margin-bottom: 20px; display: flex; gap: 15px; flex-wrap: wrap; align-items: flex-end; justify-content: center;}
+        .input-group div { display: flex; flex-direction: column; }
+        .input-group label { margin-bottom: 5px; font-size: 0.9em; text-align: center;}
+        .input-group input { padding: 10px; background: var(--bg-color); color: var(--text-color); border: 1px solid var(--border); border-radius: 4px; color-scheme: dark; font-size: 1.1em;}
+        .btn-sleep { padding: 12px 20px; background-color: var(--sleep-color); border: none; border-radius: 4px; color: #000; cursor: pointer; font-weight: bold; font-size: 1em;}
+        .btn-wake { padding: 12px 20px; background-color: var(--wake-color); border: none; border-radius: 4px; color: #000; cursor: pointer; font-weight: bold; font-size: 1em;}
+
+        .log-list { background-color: var(--panel-bg); padding: 20px; border-radius: 8px; }
+        .log-list h3 { margin-top: 0; }
+        .log-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid var(--border); }
+        .log-item:last-child { border-bottom: none; }
+        .tag-sleep { color: var(--sleep-color); font-weight: bold; margin-right: 10px;}
+        .tag-wake { color: var(--wake-color); font-weight: bold; margin-right: 10px;}
+        .delete-btn { background: #ff5555; color: white; border: none; border-radius: 3px; cursor: pointer; padding: 5px 10px;}
+    </style>
+</head>
+<body>
+
+    <div id="dashboard">
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('tab1', this)">WiFi Cam</button>
+            <button class="tab-btn" onclick="switchTab('tab2', this)">Away Cam</button>
+            <button class="tab-btn" onclick="switchTab('tab3', this)">Puppy Tracker</button>
+        </div>
+
+        <div id="tab1" class="tab-content active">
+            <iframe data-src="http://babycam.local:5000/" src="http://babycam.local:5000/"></iframe>
+        </div>
+
+        <div id="tab2" class="tab-content">
+            <iframe data-src="https://remover-barbed-expert.ngrok-free.dev/" src=""></iframe>
+        </div>
+
+        <div id="tab3" class="tab-content">
+            <div class="tracker-container">
+                
+                <div class="header-controls">
+                    <button onclick="changeDay(-1)">&#8592; Prev Day</button>
+                    <h3 id="current-date-display">Day</h3>
+                    <button onclick="changeDay(1)">Next Day &#8594;</button>
+                </div>
+
+                <div class="stats-card">
+                    <h2 id="stats-title">Day</h2>
+                    <p>Time Slept: <span id="time-slept">0h 0m</span></p>
+                    <p>Time Remaining in Day: <span id="time-remaining">0h 0m</span></p>
+                    <div id="current-status">Status: Loading...</div>
+                </div>
+
+                <div class="timeline-container">
+                    <h3>24-Hour Timeline</h3>
+                    <div class="timeline-bar" id="timeline-bar">
+                        </div>
+                    <div class="timeline-labels">
+                        <span>12a</span><span>1a</span><span>2a</span><span>3a</span><span>4a</span><span>5a</span>
+                        <span>6a</span><span>7a</span><span>8a</span><span>9a</span><span>10a</span><span>11a</span>
+                        <span>12p</span><span>1p</span><span>2p</span><span>3p</span><span>4p</span><span>5p</span>
+                        <span>6p</span><span>7p</span><span>8p</span><span>9p</span><span>10p</span><span>11p</span><span>12a</span>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <div>
+                        <label>Enter Time</label>
+                        <input type="time" id="event-time">
+                    </div>
+                    <button class="btn-sleep" onclick="logEvent('sleep')">Log Sleep</button>
+                    <button class="btn-wake" onclick="logEvent('wake')">Log Wake</button>
+                </div>
+
+                <div class="log-list">
+                    <h3>Raw Event Timeline</h3>
+                    <div id="logs-container"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. TABS ---
+        function switchTab(tabId, btnElement) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            
+            document.querySelectorAll('iframe').forEach(iframe => {
+                iframe.setAttribute('src', ''); 
+            });
+
+            const activeTab = document.getElementById(tabId);
+            activeTab.classList.add('active');
+            btnElement.classList.add('active');
+
+            const activeIframe = activeTab.querySelector('iframe');
+            if (activeIframe) {
+                const urlToLoad = activeIframe.getAttribute('data-src');
+                activeIframe.setAttribute('src', urlToLoad);
+            }
+        }
+
+        // --- 2. EVENT-DRIVEN PUPPY TRACKER ---
+        let events = JSON.parse(localStorage.getItem('puppyTrackerEvents')) || [];
+        let viewDate = new Date(); 
+
+        function setCurrentTime() {
+            const now = new Date();
+            const hh = String(now.getHours()).padStart(2, '0');
+            const mm = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('event-time').value = `${hh}:${mm}`;
+        }
+
+        function changeDay(offset) {
+            viewDate.setDate(viewDate.getDate() + offset);
+            updateTrackerUI();
+        }
+
+        function logEvent(type) {
+            const timeVal = document.getElementById('event-time').value;
+            if (!timeVal) return alert("Must enter a time.");
+            
+            const [hours, minutes] = timeVal.split(':').map(Number);
+            
+            const eventDate = new Date(viewDate.getFullYear(), viewDate.getMonth(), viewDate.getDate(), hours, minutes);
+            
+            events.push({
+                id: Date.now(),
+                type: type, 
+                timestamp: eventDate.getTime()
+            });
+            
+            localStorage.setItem('puppyTrackerEvents', JSON.stringify(events));
+            updateTrackerUI();
+        }
+
+        function deleteEvent(id) {
+            events = events.filter(ev => ev.id !== id);
+            localStorage.setItem('puppyTrackerEvents', JSON.stringify(events));
+            updateTrackerUI();
+        }
+
+        function generateSleepBlocks() {
+            const sortedEvents = [...events].sort((a, b) => a.timestamp - b.timestamp);
+            let blocks = [];
+            let currentSleepStart = null;
+
+            sortedEvents.forEach(ev => {
+                if (ev.type === 'sleep') {
+                    currentSleepStart = ev.timestamp; 
+                } else if (ev.type === 'wake' && currentSleepStart !== null) {
+                    blocks.push({ start: currentSleepStart, end: ev.timestamp }); 
+                    currentSleepStart = null;
+                }
+            });
+
+            if (currentSleepStart !== null) {
+                blocks.push({ start: currentSleepStart, end: null }); 
+            }
+
+            return blocks;
+        }
+
+        function updateTrackerUI() {
+            const sleepBlocks = generateSleepBlocks();
+            const now = new Date().getTime();
+
+            // Status Banner
+            const sortedEvents = [...events].sort((a, b) => a.timestamp - b.timestamp);
+            const statusEl = document.getElementById('current-status');
+            if (sortedEvents.length === 0) {
+                statusEl.innerHTML = "Status: No data yet.";
+                statusEl.style.color = "var(--text-color)";
+            } else {
+                const lastEvent = sortedEvents[sortedEvents.length - 1];
+                if (lastEvent.type === 'sleep') {
+                    statusEl.innerHTML = `💤 Status: Sleeping (waiting for awake...)`;
+                    statusEl.style.color = "var(--sleep-color)";
+                } else {
+                    statusEl.innerHTML = `☀️ Status: Awake`;
+                    statusEl.style.color = "var(--wake-color)";
+                }
+            }
+
+            // Calculations
+            const dayStart = new Date(viewDate.getFullYear(), viewDate.getMonth(), viewDate.getDate(), 0, 0, 0).getTime();
+            const dayEnd = new Date(viewDate.getFullYear(), viewDate.getMonth(), viewDate.getDate(), 23, 59, 59).getTime();
+            const totalMsInDay = dayEnd - dayStart;
+
+            let dailySleepMs = 0;
+            const timelineBar = document.getElementById('timeline-bar');
+            timelineBar.innerHTML = ''; 
+            
+            sleepBlocks.forEach(block => {
+                const blockStart = block.start;
+                const blockEnd = block.end ? block.end : now; 
+
+                const overlapStart = Math.max(blockStart, dayStart);
+                const overlapEnd = Math.min(blockEnd, dayEnd);
+
+                if (overlapStart < overlapEnd) {
+                    dailySleepMs += (overlapEnd - overlapStart);
+
+                    const leftPercentage = ((overlapStart - dayStart) / totalMsInDay) * 100;
+                    const widthPercentage = ((overlapEnd - overlapStart) / totalMsInDay) * 100;
+
+                    const visualBlock = document.createElement('div');
+                    visualBlock.className = 'timeline-sleep-block';
+                    visualBlock.style.left = `${leftPercentage}%`;
+                    visualBlock.style.width = `${widthPercentage}%`;
+                    timelineBar.appendChild(visualBlock);
+                }
+            });
+
+            const sleepHrs = Math.floor(dailySleepMs / (1000 * 60 * 60));
+            const sleepMins = Math.floor((dailySleepMs % (1000 * 60 * 60)) / (1000 * 60));
+
+            // Time remaining in day
+            let timeRemainingMs = 0;
+            if (dayEnd > now && dayStart <= now) {
+                timeRemainingMs = dayEnd - now; 
+            } else if (dayStart > now) {
+                timeRemainingMs = 24 * 60 * 60 * 1000; 
+            } 
+
+            const remHrs = Math.floor(timeRemainingMs / (1000 * 60 * 60));
+            const remMins = Math.floor((timeRemainingMs % (1000 * 60 * 60)) / (1000 * 60));
+
+            // Update UI Text
+            const options = { weekday: 'long', month: 'numeric', day: 'numeric', year: '2-digit' };
+            document.getElementById('current-date-display').innerText = viewDate.toLocaleDateString();
+            document.getElementById('stats-title').innerText = `Day (${viewDate.toLocaleDateString('en-US', options)})`;
+            document.getElementById('time-slept').innerText = `${sleepHrs}h ${sleepMins}m`;
+            document.getElementById('time-remaining').innerText = `${remHrs}h ${remMins}m`;
+
+            // Render Raw Events list
+            const container = document.getElementById('logs-container');
+            container.innerHTML = '';
+            
+            const descendingEvents = [...sortedEvents].reverse(); 
+            
+            descendingEvents.forEach(ev => {
+                const timeStr = new Date(ev.timestamp).toLocaleString([], {month: 'numeric', day: 'numeric', hour: '2-digit', minute:'2-digit'});
+                const tagClass = ev.type === 'sleep' ? 'tag-sleep' : 'tag-wake';
+                const tagText = ev.type === 'sleep' ? 'SLEPT' : 'WOKE UP';
+                
+                container.innerHTML += `
+                    <div class="log-item">
+                        <div>
+                            <span class="${tagClass}">${tagText}</span>
+                            <span>${timeStr}</span>
+                        </div>
+                        <button class="delete-btn" onclick="deleteEvent(${ev.id})">Delete</button>
+                    </div>
+                `;
+            });
+        }
+
+        setCurrentTime();
+        updateTrackerUI();
+        setInterval(updateTrackerUI, 60000);
+
+    </script>
+</body>
+</html>
