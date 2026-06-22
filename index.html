@@ -6,83 +6,174 @@
     <title>Master Dashboard</title>
     <style>
         :root {
-            --bg-color: #1e1e2e;
-            --panel-bg: #282a36;
-            --text-color: #f8f8f2;
-            --primary: #bd93f9;
-            --secondary: #ff79c6;
-            --border: #44475a;
-            --sleep-color: #8be9fd;
-            --wake-color: #f1fa8c;
-        }
-        body, html {
-            margin: 0; padding: 0; height: 100%;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color); color: var(--text-color);
+            /* Chaotic Early 90s Geocities Palette */
+            --bg-color: #000033; /* Deep space blue */
+            --panel-bg: #000080; /* Navy blue panels */
+            --text-color: #00FF00; /* Hacker neon green */
+            --primary: #FF00FF; /* Hot Magenta */
+            --secondary: #FFFF00; /* Pure Yellow */
+            --border-wild: 4px ridge #00FFFF; /* Cyan 3D ridge */
+            --sleep-color: #00FFFF; /* Cyan */
+            --wake-color: #FF00FF; /* Magenta */
         }
         
-        #dashboard { display: flex; height: 100%; flex-direction: column; }
+        body, html {
+            margin: 0; padding: 10px; height: 100%; box-sizing: border-box;
+            /* Starry background using SVG data URI */
+            background-color: var(--bg-color);
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 5l5 15h15l-12 10 5 15-13-10-13 10 5-15-12-10h15z' fill='%23ffff00' fill-opacity='0.15'/%3E%3C/svg%3E");
+            color: var(--text-color);
+            font-family: "Comic Sans MS", "Chalkboard SE", cursive, sans-serif;
+        }
+        
+        #dashboard { 
+            display: flex; height: calc(100% - 20px); flex-direction: column; 
+        }
+        
+        .page-title {
+            text-align: center;
+            color: var(--secondary);
+            text-shadow: 2px 2px #FF0000;
+            margin-top: 0;
+            font-size: 2em;
+        }
+
         .tabs {
-            display: flex; background-color: var(--panel-bg); padding: 10px; gap: 10px;
-            border-bottom: 2px solid var(--border);
+            display: flex; justify-content: center; padding: 10px; gap: 10px;
+            margin-bottom: 10px;
         }
         .tab-btn {
-            padding: 10px 20px; background-color: transparent; color: var(--text-color);
-            border: 1px solid var(--border); border-radius: 5px; cursor: pointer; transition: 0.2s;
+            font-family: "Comic Sans MS", cursive;
+            font-size: 1.1em; font-weight: bold;
+            padding: 10px 20px; 
+            background-color: var(--primary); color: #FFF;
+            border: 4px outset var(--primary);
+            cursor: url('https://cur.cursors-4u.net/smilies/smi-1/smi26.cur'), pointer; /* Custom 90s cursor fallback */
+            border-radius: 15px;
         }
-        .tab-btn.active { background-color: var(--primary); border-color: var(--primary); }
+        .tab-btn.active { 
+            background-color: var(--secondary); 
+            color: #000;
+            border: 4px inset var(--secondary);
+            text-decoration: blink;
+        }
+        .tab-btn:hover {
+            background-color: #00FFFF;
+            color: #000;
+            border-color: #00FFFF;
+        }
+
         .tab-content { display: none; flex-grow: 1; height: 100%; overflow-y: auto;}
         .tab-content.active { display: flex; flex-direction: column; }
-        iframe { width: 100%; height: 100%; border: none; }
+        
+        iframe { 
+            width: 100%; height: 100%; 
+            border: 8px groove var(--primary);
+            background: #fff;
+        }
 
-        .tracker-container { padding: 20px; max-width: 800px; margin: 0 auto; width: 100%; box-sizing: border-box; }
+        .tracker-container { padding: 10px; max-width: 800px; margin: 0 auto; width: 100%; box-sizing: border-box; }
+        
+        /* Wild 90s Panels */
+        .panel {
+            background-color: var(--panel-bg); 
+            padding: 15px; 
+            margin-bottom: 20px;
+            border: var(--border-wild);
+            box-shadow: 5px 5px 0px #FF00FF;
+        }
+
         .header-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .header-controls button { background-color: var(--panel-bg); color: var(--text-color); border: 1px solid var(--border); padding: 5px 15px; border-radius: 5px; cursor: pointer; }
+        .header-controls button { 
+            font-family: "Comic Sans MS", cursive; font-weight: bold;
+            background-color: var(--text-color); color: #000; 
+            border: 3px outset var(--text-color);
+            padding: 5px 15px; cursor: pointer; 
+        }
+        .header-controls button:active { border-style: inset; }
         
-        .stats-card { background-color: var(--panel-bg); padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 20px; position: relative;}
-        .stats-card h2 { margin: 0 0 10px 0; }
-        .stats-card p { font-size: 1.2em; margin: 5px 0; color: var(--secondary); }
-        #current-status { margin-top: 15px; font-weight: bold; padding: 10px; border-radius: 5px; background: rgba(0,0,0,0.2); }
+        .stats-card { text-align: center; }
+        .stats-card h2 { margin: 0 0 10px 0; color: #00FFFF; text-decoration: underline dashed #FF00FF;}
+        .stats-card p { font-size: 1.2em; margin: 5px 0; color: var(--secondary); font-weight: bold;}
         
-        /* NEW TIMELINE STYLES */
-        .timeline-container { background-color: var(--panel-bg); padding: 20px; border-radius: 8px; margin-bottom: 20px; }
-        .timeline-container h3 { margin-top: 0; margin-bottom: 10px; text-align: center;}
+        #current-status { 
+            margin-top: 15px; font-weight: bold; font-size: 1.2em;
+            padding: 10px; 
+            border: 2px dotted #FFFF00;
+            background: #000; color: #FFF;
+        }
         
+        /* TIMELINE STYLES */
+        .timeline-container h3 { margin-top: 0; margin-bottom: 10px; text-align: center; color: var(--primary); text-shadow: 1px 1px #FFF;}
         .timeline-wrapper { position: relative; margin-top: 15px; margin-bottom: 15px; }
         
         .dynamic-labels { position: relative; height: 20px; width: 100%; }
-        .dynamic-label { position: absolute; transform: translateX(-50%); font-size: 0.85em; font-weight: bold; bottom: 2px; text-shadow: 1px 1px 2px #000; z-index: 5;}
+        .dynamic-label { 
+            position: absolute; transform: translateX(-50%); font-size: 1em; font-weight: bold; bottom: 2px; 
+            text-shadow: 2px 2px 0px #000; z-index: 5;
+        }
         
-        .timeline-bar { position: relative; height: 35px; background-color: rgba(0,0,0,0.4); border-radius: 6px; margin: 5px 0; }
-        .timeline-sleep-block { position: absolute; height: 100%; top: 0; background-color: var(--sleep-color); opacity: 0.85; border-radius: 4px; z-index: 1;}
-        .hour-tick { position: absolute; bottom: 0; width: 1px; height: 8px; background-color: rgba(255,255,255,0.3); z-index: 2; }
+        .timeline-bar { 
+            position: relative; height: 40px; background-color: #333; 
+            border: 3px solid #FFFF00;
+            margin: 5px 0; 
+            background-image: repeating-linear-gradient(45deg, #000 0, #000 10px, #333 10px, #333 20px);
+        }
+        .timeline-sleep-block { position: absolute; height: 100%; top: 0; background-color: var(--sleep-color); opacity: 0.9; z-index: 1;}
+        .hour-tick { position: absolute; bottom: 0; width: 1px; height: 12px; background-color: #FFF; z-index: 2; }
         
-        .fixed-labels { position: relative; height: 20px; width: 100%; font-size: 0.75em; color: #888; font-weight: bold;}
+        .fixed-labels { position: relative; height: 20px; width: 100%; font-size: 0.9em; color: #00FFFF; font-weight: bold;}
         .fixed-label { position: absolute; transform: translateX(-50%); }
 
-        .input-group { background-color: var(--panel-bg); padding: 20px; border-radius: 8px; margin-bottom: 20px; display: flex; gap: 15px; flex-wrap: wrap; align-items: flex-end; justify-content: center;}
+        .input-group { display: flex; gap: 15px; flex-wrap: wrap; align-items: flex-end; justify-content: center;}
         .input-group div { display: flex; flex-direction: column; }
-        .input-group label { margin-bottom: 5px; font-size: 0.9em; text-align: center;}
-        .input-group input { padding: 10px; background: var(--bg-color); color: var(--text-color); border: 1px solid var(--border); border-radius: 4px; color-scheme: dark; font-size: 1.1em;}
-        .btn-sleep { padding: 12px 20px; background-color: var(--sleep-color); border: none; border-radius: 4px; color: #000; cursor: pointer; font-weight: bold; font-size: 1em;}
-        .btn-wake { padding: 12px 20px; background-color: var(--wake-color); border: none; border-radius: 4px; color: #000; cursor: pointer; font-weight: bold; font-size: 1em;}
+        .input-group label { margin-bottom: 5px; font-size: 1.1em; text-align: center; color: var(--secondary);}
+        
+        .input-group input { 
+            padding: 5px; background: #000; color: var(--text-color); 
+            border: 3px inset #00FFFF;
+            font-family: "Courier New", Courier, monospace; font-size: 1.2em; font-weight: bold;
+        }
+        
+        .btn-sleep { 
+            padding: 10px 20px; background-color: var(--sleep-color); color: #000; 
+            border: 4px outset var(--sleep-color);
+            cursor: pointer; font-weight: bold; font-family: "Comic Sans MS", cursive; font-size: 1.1em;
+        }
+        .btn-wake { 
+            padding: 10px 20px; background-color: var(--wake-color); color: #000; 
+            border: 4px outset var(--wake-color);
+            cursor: pointer; font-weight: bold; font-family: "Comic Sans MS", cursive; font-size: 1.1em;
+        }
+        .btn-sleep:active, .btn-wake:active { border-style: inset; }
 
-        .log-list { background-color: var(--panel-bg); padding: 20px; border-radius: 8px; }
-        .log-list h3 { margin-top: 0; }
-        .log-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid var(--border); }
-        .log-item:last-child { border-bottom: none; }
-        .tag-sleep { color: var(--sleep-color); font-weight: bold; margin-right: 10px;}
-        .tag-wake { color: var(--wake-color); font-weight: bold; margin-right: 10px;}
-        .delete-btn { background: #ff5555; color: white; border: none; border-radius: 3px; cursor: pointer; padding: 5px 10px;}
+        .log-list h3 { margin-top: 0; color: #00FFFF; text-align: center;}
+        .log-item { 
+            display: flex; justify-content: space-between; align-items: center; padding: 10px; 
+            border-bottom: 2px dashed var(--primary); font-family: "Courier New", Courier, monospace;
+            background-color: #000055; margin-bottom: 5px;
+        }
+        .tag-sleep { color: var(--sleep-color); font-weight: bold; margin-right: 10px; font-size: 1.2em;}
+        .tag-wake { color: var(--wake-color); font-weight: bold; margin-right: 10px; font-size: 1.2em;} 
+        
+        .delete-btn { 
+            background: #FF0000; color: #FFFF00; 
+            border: 3px outset #FF0000;
+            cursor: pointer; padding: 5px 10px; font-weight: bold; font-size: 0.9em;
+            font-family: "Comic Sans MS", cursive;
+        }
+        .delete-btn:active { border-style: inset; }
     </style>
 </head>
 <body>
 
     <div id="dashboard">
+        <h1 class="page-title">~*~ Master Dashboard ~*~</h1>
+        
         <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab('tab1', this)">WiFi Cam</button>
-            <button class="tab-btn" onclick="switchTab('tab2', this)">Away Cam</button>
-            <button class="tab-btn" onclick="switchTab('tab3', this)">Puppy Tracker</button>
+            <button class="tab-btn active" onclick="switchTab('tab1', this)">WiFi Cam!</button>
+            <button class="tab-btn" onclick="switchTab('tab2', this)">Away Cam!</button>
+            <button class="tab-btn" onclick="switchTab('tab3', this)">Puppy Tracker!</button>
         </div>
 
         <div id="tab1" class="tab-content active">
@@ -96,21 +187,23 @@
         <div id="tab3" class="tab-content">
             <div class="tracker-container">
                 
-                <div class="header-controls">
-                    <button onclick="changeDay(-1)">&#8592; Prev Day</button>
-                    <h3 id="current-date-display">Day</h3>
-                    <button onclick="changeDay(1)">Next Day &#8594;</button>
+                <div class="header-controls panel">
+                    <button onclick="changeDay(-1)">&#9668; PREV DAY</button>
+                    <h3 id="current-date-display" style="margin:0; font-size: 1.5em; color: #FFFF00;">Day</h3>
+                    <button onclick="changeDay(1)">NEXT DAY &#9658;</button>
                 </div>
 
-                <div class="stats-card">
+                <div class="stats-card panel">
                     <h2 id="stats-title">Day</h2>
-                    <p>Time Slept: <span id="time-slept">0h 0m</span> &nbsp;|&nbsp; Time Awake: <span id="time-awake">0h 0m</span></p>
-                    <p>Time Remaining in Day: <span id="time-remaining">0h 0m</span></p>
-                    <div id="current-status">Status: Loading...</div>
+                    <p>Time Slept: <span id="time-slept" style="color:#00FFFF;">0h 0m</span> &nbsp;||&nbsp; Time Awake: <span id="time-awake" style="color:#FF00FF;">0h 0m</span></p>
+                    <p>Time Remaining: <span id="time-remaining">0h 0m</span></p>
+                    <div id="current-status-container">
+                        <!-- We will inject the marquee here -->
+                    </div>
                 </div>
 
-                <div class="timeline-container">
-                    <h3>24-Hour Timeline</h3>
+                <div class="timeline-container panel">
+                    <h3>+++ 24-HOUR TIMELINE +++</h3>
                     <div class="timeline-wrapper">
                         <div class="dynamic-labels" id="dynamic-labels"></div>
                         
@@ -126,17 +219,17 @@
                     </div>
                 </div>
 
-                <div class="input-group">
+                <div class="input-group panel">
                     <div>
-                        <label>Enter Time</label>
+                        <label>Enter Time:</label>
                         <input type="time" id="event-time">
                     </div>
-                    <button class="btn-sleep" onclick="logEvent('sleep')">Log Sleep</button>
-                    <button class="btn-wake" onclick="logEvent('wake')">Log Wake</button>
+                    <button class="btn-sleep" onclick="logEvent('sleep')">LOG SLEEP (ZzZ)</button>
+                    <button class="btn-wake" onclick="logEvent('wake')">LOG WAKE (!)</button>
                 </div>
 
-                <div class="log-list">
-                    <h3>Raw Event Timeline</h3>
+                <div class="log-list panel">
+                    <h3>~ RAW EVENT LOGS ~</h3>
                     <div id="logs-container"></div>
                 </div>
             </div>
@@ -182,7 +275,7 @@
 
         function logEvent(type) {
             const timeVal = document.getElementById('event-time').value;
-            if (!timeVal) return alert("Must enter a time.");
+            if (!timeVal) return alert("You gotta enter a time, dude!");
             
             const [hours, minutes] = timeVal.split(':').map(Number);
             const eventDate = new Date(viewDate.getFullYear(), viewDate.getMonth(), viewDate.getDate(), hours, minutes);
@@ -228,22 +321,28 @@
             const sleepBlocks = generateSleepBlocks();
             const now = new Date().getTime();
 
-            // Status Banner
+            // Status Banner (Using a classic MARQUEE tag)
             const sortedEvents = [...events].sort((a, b) => a.timestamp - b.timestamp);
-            const statusEl = document.getElementById('current-status');
+            const statusContainer = document.getElementById('current-status-container');
+            let statusText = "";
+            let statusColor = "";
+            
             if (sortedEvents.length === 0) {
-                statusEl.innerHTML = "Status: No data yet.";
-                statusEl.style.color = "var(--text-color)";
+                statusText = "STATUS: AWAITING INPUT...";
+                statusColor = "#FFFF00";
             } else {
                 const lastEvent = sortedEvents[sortedEvents.length - 1];
                 if (lastEvent.type === 'sleep') {
-                    statusEl.innerHTML = `💤 Status: Sleeping (waiting for awake...)`;
-                    statusEl.style.color = "var(--sleep-color)";
+                    statusText = `*** STATUS: SNOOZING ***`;
+                    statusColor = "var(--sleep-color)";
                 } else {
-                    statusEl.innerHTML = `☀️ Status: Awake`;
-                    statusEl.style.color = "var(--wake-color)";
+                    statusText = `*** STATUS: WOKE ***`;
+                    statusColor = "var(--wake-color)";
                 }
             }
+            
+            // Re-inject the marquee every update to keep it fresh
+            statusContainer.innerHTML = `<div id="current-status" style="color: ${statusColor};"><marquee scrollamount="8" width="80%">${statusText}</marquee></div>`;
 
             // Calculations Setup
             const dayStart = new Date(viewDate.getFullYear(), viewDate.getMonth(), viewDate.getDate(), 0, 0, 0).getTime();
@@ -265,11 +364,10 @@
 
             // Render Dynamic Logged Events (Numbers over the bar)
             sortedEvents.forEach(ev => {
-                // Ensure the event actually falls within the currently viewed day
                 if (ev.timestamp >= dayStart && ev.timestamp <= dayEnd) {
                     const evDate = new Date(ev.timestamp);
                     let hourNumber = evDate.getHours() % 12;
-                    if (hourNumber === 0) hourNumber = 12; // Handle midnight/noon formatting
+                    if (hourNumber === 0) hourNumber = 12; 
                     
                     const leftPercentage = ((ev.timestamp - dayStart) / totalMsInDay) * 100;
                     
@@ -277,7 +375,6 @@
                     label.className = 'dynamic-label';
                     label.style.left = `${leftPercentage}%`;
                     label.innerText = hourNumber;
-                    // Color code it based on sleep vs wake
                     label.style.color = ev.type === 'sleep' ? 'var(--sleep-color)' : 'var(--wake-color)';
                     
                     dynamicLabels.appendChild(label);
@@ -310,13 +407,11 @@
             const sleepHrs = Math.floor(dailySleepMs / (1000 * 60 * 60));
             const sleepMins = Math.floor((dailySleepMs % (1000 * 60 * 60)) / (1000 * 60));
 
-            // --- AWAKE TIME CALCULATION ---
-            // Find total elapsed time for the day we are currently viewing
+            // AWAKE TIME CALCULATION
             let timeElapsedMs = 0;
             if (dayStart <= now) {
                 timeElapsedMs = Math.min(now, dayEnd) - dayStart;
             }
-            // Awake time is total elapsed time minus time spent sleeping
             const awakeMs = Math.max(0, timeElapsedMs - dailySleepMs);
             const awakeHrs = Math.floor(awakeMs / (1000 * 60 * 60));
             const awakeMins = Math.floor((awakeMs % (1000 * 60 * 60)) / (1000 * 60));
@@ -333,11 +428,11 @@
             const remMins = Math.floor((timeRemainingMs % (1000 * 60 * 60)) / (1000 * 60));
 
             // Update UI Text
-            const options = { weekday: 'long', month: 'numeric', day: 'numeric', year: '2-digit' };
-            document.getElementById('current-date-display').innerText = viewDate.toLocaleDateString();
-            document.getElementById('stats-title').innerText = `Day (${viewDate.toLocaleDateString('en-US', options)})`;
+            const options = { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' };
+            document.getElementById('current-date-display').innerText = viewDate.toLocaleDateString('en-US');
+            document.getElementById('stats-title').innerText = `:: ${viewDate.toLocaleDateString('en-US', options)} ::`;
             document.getElementById('time-slept').innerText = `${sleepHrs}h ${sleepMins}m`;
-            document.getElementById('time-awake').innerText = `${awakeHrs}h ${awakeMins}m`; // Update awake time
+            document.getElementById('time-awake').innerText = `${awakeHrs}h ${awakeMins}m`;
             document.getElementById('time-remaining').innerText = `${remHrs}h ${remMins}m`;
 
             // Render Raw Events list
@@ -349,15 +444,15 @@
             descendingEvents.forEach(ev => {
                 const timeStr = new Date(ev.timestamp).toLocaleString([], {month: 'numeric', day: 'numeric', hour: '2-digit', minute:'2-digit'});
                 const tagClass = ev.type === 'sleep' ? 'tag-sleep' : 'tag-wake';
-                const tagText = ev.type === 'sleep' ? 'SLEPT' : 'WOKE UP';
+                const tagText = ev.type === 'sleep' ? '[-ZzZ-]' : '[!O_O!]';
                 
                 container.innerHTML += `
                     <div class="log-item">
                         <div>
                             <span class="${tagClass}">${tagText}</span>
-                            <span>${timeStr}</span>
+                            <span style="color:#FFF;">${timeStr}</span>
                         </div>
-                        <button class="delete-btn" onclick="deleteEvent(${ev.id})">Delete</button>
+                        <button class="delete-btn" onclick="deleteEvent(${ev.id})">TRASH</button>
                     </div>
                 `;
             });
