@@ -104,7 +104,7 @@
 
                 <div class="stats-card">
                     <h2 id="stats-title">Day</h2>
-                    <p>Time Slept: <span id="time-slept">0h 0m</span></p>
+                    <p>Time Slept: <span id="time-slept">0h 0m</span> &nbsp;|&nbsp; Time Awake: <span id="time-awake">0h 0m</span></p>
                     <p>Time Remaining in Day: <span id="time-remaining">0h 0m</span></p>
                     <div id="current-status">Status: Loading...</div>
                 </div>
@@ -310,6 +310,17 @@
             const sleepHrs = Math.floor(dailySleepMs / (1000 * 60 * 60));
             const sleepMins = Math.floor((dailySleepMs % (1000 * 60 * 60)) / (1000 * 60));
 
+            // --- AWAKE TIME CALCULATION ---
+            // Find total elapsed time for the day we are currently viewing
+            let timeElapsedMs = 0;
+            if (dayStart <= now) {
+                timeElapsedMs = Math.min(now, dayEnd) - dayStart;
+            }
+            // Awake time is total elapsed time minus time spent sleeping
+            const awakeMs = Math.max(0, timeElapsedMs - dailySleepMs);
+            const awakeHrs = Math.floor(awakeMs / (1000 * 60 * 60));
+            const awakeMins = Math.floor((awakeMs % (1000 * 60 * 60)) / (1000 * 60));
+
             // Time remaining in day
             let timeRemainingMs = 0;
             if (dayEnd > now && dayStart <= now) {
@@ -326,6 +337,7 @@
             document.getElementById('current-date-display').innerText = viewDate.toLocaleDateString();
             document.getElementById('stats-title').innerText = `Day (${viewDate.toLocaleDateString('en-US', options)})`;
             document.getElementById('time-slept').innerText = `${sleepHrs}h ${sleepMins}m`;
+            document.getElementById('time-awake').innerText = `${awakeHrs}h ${awakeMins}m`; // Update awake time
             document.getElementById('time-remaining').innerText = `${remHrs}h ${remMins}m`;
 
             // Render Raw Events list
