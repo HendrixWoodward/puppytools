@@ -8,14 +8,14 @@
         :root {
             /* Pastel Pink & Cute Theme Variables */
             --bg-color: #fff0f3;
-            --panel-bg: rgba(255, 255, 255, 0.85); /* Slightly transparent white for a soft look */
-            --text-color: #5c4a4d; /* Soft brown-grey for readable but gentle text */
-            --primary: #ffb6c1; /* Classic pastel pink */
-            --secondary: #ff85a2; /* Slightly deeper pink for contrast */
-            --border: #ffc2d1; /* Very soft pink border */
-            --sleep-color: #a2c2ff; /* Pastel baby blue for sleep */
-            --wake-color: #ffe066; /* Warm pastel yellow for wake */
-            --shadow: 0 8px 20px rgba(255, 182, 193, 0.25); /* Soft pink drop shadow */
+            --panel-bg: rgba(255, 255, 255, 0.85);
+            --text-color: #5c4a4d;
+            --primary: #ffb6c1;
+            --secondary: #ff85a2;
+            --border: #ffc2d1;
+            --sleep-color: #a2c2ff;
+            --wake-color: #ffe066;
+            --shadow: 0 8px 20px rgba(255, 182, 193, 0.25);
         }
         
         body, html {
@@ -23,7 +23,6 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg-color); 
             color: var(--text-color);
-            /* Cute repeating pawprint SVG background */
             background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffc2d1' opacity='0.35'%3E%3Ccircle cx='18' cy='45' r='9'/%3E%3Ccircle cx='35' cy='25' r='9'/%3E%3Ccircle cx='65' cy='25' r='9'/%3E%3Ccircle cx='82' cy='45' r='9'/%3E%3Cpath d='M 25 65 C 25 50 40 45 50 45 C 60 45 75 50 75 65 C 75 80 65 90 50 90 C 35 90 25 80 25 65 Z'/%3E%3C/g%3E%3C/svg%3E");
         }
         
@@ -44,15 +43,13 @@
             background-color: #ffffff; 
             color: var(--text-color);
             border: 2px solid var(--border); 
-            border-radius: 20px; /* Pill shape for cuteness */
+            border-radius: 20px;
             cursor: pointer; 
             transition: all 0.3s ease;
             font-weight: bold;
         }
         
-        .tab-btn:hover {
-            background-color: var(--bg-color);
-        }
+        .tab-btn:hover { background-color: var(--bg-color); }
         
         .tab-btn.active { 
             background-color: var(--primary); 
@@ -65,7 +62,6 @@
         .tab-content.active { display: flex; flex-direction: column; }
         iframe { width: 100%; flex-grow: 1; border: none; }
 
-        /* Fallback Link Styles */
         .fallback-link {
             text-align: center;
             padding: 15px;
@@ -128,7 +124,7 @@
             background: rgba(255, 182, 193, 0.2); 
         }
         
-        /* NEW TIMELINE STYLES */
+        /* TIMELINE STYLES */
         .timeline-container { 
             background-color: var(--panel-bg); 
             padding: 20px; 
@@ -139,7 +135,29 @@
         }
         .timeline-container h3 { margin-top: 0; margin-bottom: 10px; text-align: center; color: var(--secondary);}
         
-        .timeline-wrapper { position: relative; margin-top: 15px; margin-bottom: 15px; }
+        /* FLEX LAYOUT FOR ALIGNMENT */
+        .timeline-flex { display: flex; width: 100%; align-items: center;}
+        .timeline-date-col { 
+            width: 0px; 
+            opacity: 0; 
+            transition: all 0.3s ease; 
+            text-align: right; 
+            padding-right: 0px; 
+            font-size: 0.85em; 
+            font-weight: bold; 
+            color: var(--secondary); 
+            overflow: hidden; 
+            white-space: nowrap;
+        }
+        /* When toggled on, expand the date column to keep main and history aligned */
+        .timeline-container.show-history .timeline-date-col { 
+            width: 45px; 
+            opacity: 1; 
+            padding-right: 15px; 
+        }
+        .timeline-content-col { flex-grow: 1; position: relative; width: calc(100% - 60px); }
+
+        .timeline-wrapper { position: relative; margin-top: 15px; margin-bottom: 15px; width: 100%;}
         
         .dynamic-labels { position: relative; height: 20px; width: 100%; }
         .dynamic-label { 
@@ -148,17 +166,18 @@
             font-size: 0.85em; 
             font-weight: bold; 
             bottom: 2px; 
-            text-shadow: 1px 1px 2px rgba(255,255,255,0.8); /* Lightened text shadow */
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
             z-index: 5;
         }
         
         .timeline-bar { 
             position: relative; 
             height: 35px; 
-            background-color: rgba(255, 182, 193, 0.3); /* Soft pink track */
+            background-color: rgba(255, 182, 193, 0.3);
             border-radius: 10px; 
             margin: 5px 0; 
             box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+            width: 100%;
         }
         .timeline-sleep-block { 
             position: absolute; 
@@ -174,6 +193,34 @@
         
         .fixed-labels { position: relative; height: 20px; width: 100%; font-size: 0.75em; color: #999; font-weight: bold;}
         .fixed-label { position: absolute; transform: translateX(-50%); }
+
+        /* TOGGLE & HISTORY STYLES */
+        .toggle-container {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 15px;
+            margin-top: 25px;
+            padding-top: 15px;
+            border-top: 2px dashed var(--border);
+            font-weight: bold;
+            color: var(--secondary);
+            font-size: 0.9em;
+        }
+        
+        .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #e4c8ce; transition: .4s; border-radius: 24px;}
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2);}
+        input:checked + .slider { background-color: var(--secondary); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        .history-container { display: none; flex-direction: column; gap: 8px; margin-top: 15px; }
+        .history-container.active { display: flex; }
+        
+        .history-track { position: relative; height: 10px; background-color: rgba(255, 182, 193, 0.2); border-radius: 5px; width: 100%;}
+        .history-sleep-block { position: absolute; height: 100%; top: 0; background-color: var(--sleep-color); opacity: 0.65; border-radius: 5px; }
+
 
         .input-group { 
             background-color: var(--panel-bg); 
@@ -207,7 +254,7 @@
             background-color: var(--sleep-color); 
             border: none; 
             border-radius: 10px; 
-            color: #4a5c96; /* Darker blue for readable contrast */
+            color: #4a5c96;
             cursor: pointer; 
             font-weight: bold; 
             font-size: 1em;
@@ -221,7 +268,7 @@
             background-color: var(--wake-color); 
             border: none; 
             border-radius: 10px; 
-            color: #8c7a1a; /* Darker yellow/brown for readable contrast */
+            color: #8c7a1a;
             cursor: pointer; 
             font-weight: bold; 
             font-size: 1em;
@@ -297,21 +344,41 @@
                     <div id="current-status">Status: Loading...</div>
                 </div>
 
-                <div class="timeline-container">
+                <div class="timeline-container" id="main-timeline-container">
                     <h3>24-Hour Timeline</h3>
-                    <div class="timeline-wrapper">
-                        <div class="dynamic-labels" id="dynamic-labels"></div>
-                        
-                        <div class="timeline-bar" id="timeline-bar"></div>
-                        
-                        <div class="fixed-labels">
-                            <span class="fixed-label" style="left: 0%;">12a</span>
-                            <span class="fixed-label" style="left: 25%;">6a</span>
-                            <span class="fixed-label" style="left: 50%;">12p</span>
-                            <span class="fixed-label" style="left: 75%;">6p</span>
-                            <span class="fixed-label" style="left: 100%;">12a</span>
+                    
+                    <div class="timeline-flex">
+                        <div class="timeline-date-col"></div> <!-- Empty spacer to keep main aligned with history dates -->
+                        <div class="timeline-content-col">
+                            <div class="timeline-wrapper">
+                                <div class="dynamic-labels" id="dynamic-labels"></div>
+                                
+                                <div class="timeline-bar" id="timeline-bar"></div>
+                                
+                                <div class="fixed-labels">
+                                    <span class="fixed-label" style="left: 0%;">12a</span>
+                                    <span class="fixed-label" style="left: 25%;">6a</span>
+                                    <span class="fixed-label" style="left: 50%;">12p</span>
+                                    <span class="fixed-label" style="left: 75%;">6p</span>
+                                    <span class="fixed-label" style="left: 100%;">12a</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
+
+                    <!-- 5-Day History View -->
+                    <div class="history-container" id="history-container">
+                        <!-- Javascript will inject 5 rows here -->
+                    </div>
+
+                    <div class="toggle-container">
+                        <span>Show History (Past 5 Days)</span>
+                        <label class="switch">
+                            <input type="checkbox" id="history-toggle" onchange="toggleHistory()">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
                 </div>
 
                 <div class="input-group">
@@ -412,6 +479,20 @@
             return blocks;
         }
 
+        function toggleHistory() {
+            const container = document.getElementById('main-timeline-container');
+            const histContainer = document.getElementById('history-container');
+            const toggle = document.getElementById('history-toggle');
+            
+            if (toggle.checked) {
+                container.classList.add('show-history');
+                histContainer.classList.add('active');
+            } else {
+                container.classList.remove('show-history');
+                histContainer.classList.remove('active');
+            }
+        }
+
         function updateTrackerUI() {
             const sleepBlocks = generateSleepBlocks();
             const now = new Date().getTime();
@@ -426,10 +507,10 @@
                 const lastEvent = sortedEvents[sortedEvents.length - 1];
                 if (lastEvent.type === 'sleep') {
                     statusEl.innerHTML = `💤 Status: Sleeping (waiting for awake...)`;
-                    statusEl.style.color = "#7a94de"; // Slightly darker blue for light theme
+                    statusEl.style.color = "#7a94de"; 
                 } else {
                     statusEl.innerHTML = `☀️ Status: Awake`;
-                    statusEl.style.color = "#d1b424"; // Slightly darker yellow for light theme
+                    statusEl.style.color = "#d1b424"; 
                 }
             }
 
@@ -453,11 +534,10 @@
 
             // Render Dynamic Logged Events (Numbers over the bar)
             sortedEvents.forEach(ev => {
-                // Ensure the event actually falls within the currently viewed day
                 if (ev.timestamp >= dayStart && ev.timestamp <= dayEnd) {
                     const evDate = new Date(ev.timestamp);
                     let hourNumber = evDate.getHours() % 12;
-                    if (hourNumber === 0) hourNumber = 12; // Handle midnight/noon formatting
+                    if (hourNumber === 0) hourNumber = 12; 
                     
                     const leftPercentage = ((ev.timestamp - dayStart) / totalMsInDay) * 100;
                     
@@ -465,14 +545,13 @@
                     label.className = 'dynamic-label';
                     label.style.left = `${leftPercentage}%`;
                     label.innerText = hourNumber;
-                    // Color code it based on sleep vs wake
                     label.style.color = ev.type === 'sleep' ? '#7a94de' : '#d1b424';
                     
                     dynamicLabels.appendChild(label);
                 }
             });
 
-            // Render Sleep Blocks
+            // Render Main Sleep Blocks
             let dailySleepMs = 0;
             sleepBlocks.forEach(block => {
                 const blockStart = block.start;
@@ -498,18 +577,16 @@
             const sleepHrs = Math.floor(dailySleepMs / (1000 * 60 * 60));
             const sleepMins = Math.floor((dailySleepMs % (1000 * 60 * 60)) / (1000 * 60));
 
-            // --- AWAKE TIME CALCULATION ---
-            // Find total elapsed time for the day we are currently viewing
+            // Awake time calculation
             let timeElapsedMs = 0;
             if (dayStart <= now) {
                 timeElapsedMs = Math.min(now, dayEnd) - dayStart;
             }
-            // Awake time is total elapsed time minus time spent sleeping
             const awakeMs = Math.max(0, timeElapsedMs - dailySleepMs);
             const awakeHrs = Math.floor(awakeMs / (1000 * 60 * 60));
             const awakeMins = Math.floor((awakeMs % (1000 * 60 * 60)) / (1000 * 60));
 
-            // Time remaining in day
+            // Time remaining
             let timeRemainingMs = 0;
             if (dayEnd > now && dayStart <= now) {
                 timeRemainingMs = dayEnd - now; 
@@ -525,14 +602,65 @@
             document.getElementById('current-date-display').innerText = viewDate.toLocaleDateString();
             document.getElementById('stats-title').innerText = `Day (${viewDate.toLocaleDateString('en-US', options)})`;
             document.getElementById('time-slept').innerText = `${sleepHrs}h ${sleepMins}m`;
-            document.getElementById('time-awake').innerText = `${awakeHrs}h ${awakeMins}m`; // Update awake time
+            document.getElementById('time-awake').innerText = `${awakeHrs}h ${awakeMins}m`;
             document.getElementById('time-remaining').innerText = `${remHrs}h ${remMins}m`;
+
+            // --- RENDER 5-DAY HISTORY ---
+            const histContainer = document.getElementById('history-container');
+            histContainer.innerHTML = '';
+            
+            for(let i = 1; i <= 5; i++) {
+                const pastDate = new Date(viewDate);
+                pastDate.setDate(viewDate.getDate() - i);
+                
+                const pStart = new Date(pastDate.getFullYear(), pastDate.getMonth(), pastDate.getDate(), 0, 0, 0).getTime();
+                const pEnd = new Date(pastDate.getFullYear(), pastDate.getMonth(), pastDate.getDate(), 23, 59, 59).getTime();
+                const pTotalMs = pEnd - pStart;
+                
+                // Outer Flex Row (Matches main timeline styling for alignment)
+                const row = document.createElement('div');
+                row.className = 'timeline-flex';
+                
+                // Date Column
+                const dateCol = document.createElement('div');
+                dateCol.className = 'timeline-date-col';
+                dateCol.innerText = `${pastDate.getMonth()+1}/${pastDate.getDate()}`;
+                
+                // Track Column
+                const contentCol = document.createElement('div');
+                contentCol.className = 'timeline-content-col';
+                
+                const track = document.createElement('div');
+                track.className = 'history-track';
+                
+                // Calculate blocks for this past day
+                sleepBlocks.forEach(block => {
+                    const bStart = block.start;
+                    const bEnd = block.end ? block.end : now; 
+                    const overStart = Math.max(bStart, pStart);
+                    const overEnd = Math.min(bEnd, pEnd);
+
+                    if (overStart < overEnd) {
+                        const leftPct = ((overStart - pStart) / pTotalMs) * 100;
+                        const widthPct = ((overEnd - overStart) / pTotalMs) * 100;
+
+                        const visBlock = document.createElement('div');
+                        visBlock.className = 'history-sleep-block';
+                        visBlock.style.left = `${leftPct}%`;
+                        visBlock.style.width = `${widthPct}%`;
+                        track.appendChild(visBlock);
+                    }
+                });
+                
+                contentCol.appendChild(track);
+                row.appendChild(dateCol);
+                row.appendChild(contentCol);
+                histContainer.appendChild(row);
+            }
 
             // Render Raw Events list
             const container = document.getElementById('logs-container');
             container.innerHTML = '';
-            
-            // NEW FILTER LOGIC: Only grab events inside the day bounds, then reverse for descending order
             const filteredEvents = sortedEvents.filter(ev => ev.timestamp >= dayStart && ev.timestamp <= dayEnd);
             const descendingEvents = [...filteredEvents].reverse(); 
             
