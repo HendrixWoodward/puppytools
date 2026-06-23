@@ -13,8 +13,13 @@
             --primary: #ffb6c1;
             --secondary: #ff85a2;
             --border: #ffc2d1;
+            
+            /* Tracker Colors */
             --sleep-color: #a2c2ff;
             --wake-color: #ffe066;
+            --poop-color: #bcaaa4; /* Pastel brown */
+            --feed-color: #a5d6a7; /* Pastel green */
+            
             --shadow: 0 8px 20px rgba(255, 182, 193, 0.25);
         }
         
@@ -36,6 +41,8 @@
             border-bottom: 2px solid var(--border);
             box-shadow: 0 2px 10px rgba(255, 182, 193, 0.2);
             backdrop-filter: blur(5px);
+            overflow-x: auto; /* Allows scrolling on mobile if tabs overflow */
+            white-space: nowrap;
         }
         
         .tab-btn {
@@ -78,11 +85,7 @@
             transition: 0.2s;
             display: inline-block;
         }
-        .fallback-link a:hover {
-            background-color: var(--secondary);
-            color: white;
-            box-shadow: 0 4px 10px rgba(255, 182, 193, 0.4);
-        }
+        .fallback-link a:hover { background-color: var(--secondary); color: white; }
 
         .tracker-container { padding: 20px; max-width: 800px; margin: 0 auto; width: 100%; box-sizing: border-box; }
         
@@ -97,11 +100,7 @@
             font-weight: bold;
             transition: 0.2s;
         }
-        .header-controls button:hover {
-            background-color: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
+        .header-controls button:hover { background-color: var(--primary); color: white; border-color: var(--primary); }
         
         .stats-card { 
             background-color: var(--panel-bg); 
@@ -116,13 +115,8 @@
         }
         .stats-card h2 { margin: 0 0 10px 0; color: var(--secondary); }
         .stats-card p { font-size: 1.2em; margin: 5px 0; font-weight: 500; }
-        #current-status { 
-            margin-top: 15px; 
-            font-weight: bold; 
-            padding: 10px; 
-            border-radius: 10px; 
-            background: rgba(255, 182, 193, 0.2); 
-        }
+        
+        #current-status { margin-top: 15px; font-weight: bold; padding: 10px; border-radius: 10px; background: rgba(255, 182, 193, 0.2); }
         
         /* TIMELINE STYLES */
         .timeline-container { 
@@ -135,77 +129,47 @@
         }
         .timeline-container h3 { margin-top: 0; margin-bottom: 10px; text-align: center; color: var(--secondary);}
         
-        /* FLEX LAYOUT FOR ALIGNMENT */
         .timeline-flex { display: flex; width: 100%; align-items: center;}
         .timeline-date-col { 
-            width: 0px; 
-            opacity: 0; 
-            transition: all 0.3s ease; 
-            text-align: right; 
-            padding-right: 0px; 
-            font-size: 0.85em; 
-            font-weight: bold; 
-            color: var(--secondary); 
-            overflow: hidden; 
-            white-space: nowrap;
+            width: 0px; opacity: 0; transition: all 0.3s ease; text-align: right; 
+            padding-right: 0px; font-size: 0.85em; font-weight: bold; color: var(--secondary); 
+            overflow: hidden; white-space: nowrap;
         }
-        /* When toggled on, expand the date column to keep main and history aligned */
-        .timeline-container.show-history .timeline-date-col { 
-            width: 45px; 
-            opacity: 1; 
-            padding-right: 15px; 
-        }
+        .timeline-container.show-history .timeline-date-col { width: 45px; opacity: 1; padding-right: 15px; }
         .timeline-content-col { flex-grow: 1; position: relative; width: calc(100% - 60px); }
 
         .timeline-wrapper { position: relative; margin-top: 15px; margin-bottom: 15px; width: 100%;}
-        
         .dynamic-labels { position: relative; height: 20px; width: 100%; }
         .dynamic-label { 
-            position: absolute; 
-            transform: translateX(-50%); 
-            font-size: 0.85em; 
-            font-weight: bold; 
-            bottom: 2px; 
-            text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
-            z-index: 5;
+            position: absolute; transform: translateX(-50%); font-size: 0.85em; font-weight: bold; 
+            bottom: 2px; text-shadow: 1px 1px 2px rgba(255,255,255,0.8); z-index: 5;
         }
         
         .timeline-bar { 
-            position: relative; 
-            height: 35px; 
-            background-color: rgba(255, 182, 193, 0.3);
-            border-radius: 10px; 
-            margin: 5px 0; 
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
-            width: 100%;
+            position: relative; height: 35px; background-color: rgba(255, 182, 193, 0.3);
+            border-radius: 10px; margin: 5px 0; box-shadow: inset 0 2px 5px rgba(0,0,0,0.05); width: 100%;
         }
         .timeline-sleep-block { 
-            position: absolute; 
-            height: 100%; 
-            top: 0; 
-            background-color: var(--sleep-color); 
-            opacity: 0.9; 
-            border-radius: 8px; 
-            z-index: 1;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: absolute; height: 100%; top: 0; background-color: var(--sleep-color); 
+            opacity: 0.9; border-radius: 8px; z-index: 1; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        .hour-tick { position: absolute; bottom: 0; width: 2px; height: 8px; background-color: rgba(255, 255, 255, 0.8); z-index: 2; border-radius: 2px;}
         
+        /* New Tick Styles for Care Events */
+        .timeline-care-tick {
+            position: absolute; height: 120%; top: -10%; width: 6px; 
+            border-radius: 3px; z-index: 3; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transform: translateX(-50%);
+        }
+        
+        .hour-tick { position: absolute; bottom: 0; width: 2px; height: 8px; background-color: rgba(255, 255, 255, 0.8); z-index: 2; border-radius: 2px;}
         .fixed-labels { position: relative; height: 20px; width: 100%; font-size: 0.75em; color: #999; font-weight: bold;}
         .fixed-label { position: absolute; transform: translateX(-50%); }
 
         /* TOGGLE & HISTORY STYLES */
         .toggle-container {
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            gap: 15px;
-            margin-top: 25px;
-            padding-top: 15px;
-            border-top: 2px dashed var(--border);
-            font-weight: bold;
-            color: var(--secondary);
-            font-size: 0.9em;
+            display: flex; justify-content: flex-end; align-items: center; gap: 15px;
+            margin-top: 25px; padding-top: 15px; border-top: 2px dashed var(--border);
+            font-weight: bold; color: var(--secondary); font-size: 0.9em;
         }
         
         .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
@@ -218,94 +182,71 @@
         .history-container { display: none; flex-direction: column; gap: 8px; margin-top: 15px; }
         .history-container.active { display: flex; }
         
-        .history-track { position: relative; height: 10px; background-color: rgba(255, 182, 193, 0.2); border-radius: 5px; width: 100%;}
+        .history-track { position: relative; height: 12px; background-color: rgba(255, 182, 193, 0.2); border-radius: 6px; width: 100%;}
         .history-sleep-block { position: absolute; height: 100%; top: 0; background-color: var(--sleep-color); opacity: 0.65; border-radius: 5px; }
+        .history-care-tick { position: absolute; height: 100%; top: 0; width: 4px; border-radius: 2px; transform: translateX(-50%); }
 
-
+        /* INPUT GROUPS & BUTTONS */
         .input-group { 
-            background-color: var(--panel-bg); 
-            padding: 20px; 
-            border-radius: 15px; 
-            margin-bottom: 20px; 
-            display: flex; 
-            gap: 15px; 
-            flex-wrap: wrap; 
-            align-items: flex-end; 
-            justify-content: center;
-            box-shadow: var(--shadow);
-            border: 1px solid white;
+            background-color: var(--panel-bg); padding: 20px; border-radius: 15px; 
+            margin-bottom: 20px; display: flex; gap: 15px; flex-wrap: wrap; 
+            align-items: flex-end; justify-content: center; box-shadow: var(--shadow); border: 1px solid white;
         }
         .input-group div { display: flex; flex-direction: column; }
         .input-group label { margin-bottom: 5px; font-size: 0.9em; text-align: center; font-weight: bold; color: var(--secondary);}
         .input-group input { 
-            padding: 10px; 
-            background: #ffffff; 
-            color: var(--text-color); 
-            border: 2px solid var(--border); 
-            border-radius: 10px; 
-            color-scheme: light; 
-            font-size: 1.1em;
-            outline: none;
+            padding: 10px; background: #ffffff; border: 2px solid var(--border); 
+            border-radius: 10px; font-size: 1.1em; outline: none;
         }
         .input-group input:focus { border-color: var(--secondary); }
         
-        .btn-sleep { 
-            padding: 12px 25px; 
-            background-color: var(--sleep-color); 
-            border: none; 
-            border-radius: 10px; 
-            color: #4a5c96;
-            cursor: pointer; 
-            font-weight: bold; 
-            font-size: 1em;
-            box-shadow: 0 4px 10px rgba(162, 194, 255, 0.4);
-            transition: 0.2s;
-        }
-        .btn-sleep:hover { transform: translateY(-2px); }
+        .btn-sleep { background-color: var(--sleep-color); color: #4a5c96; }
+        .btn-wake { background-color: var(--wake-color); color: #8c7a1a; }
+        .btn-poop { background-color: var(--poop-color); color: #4e342e; }
+        .btn-feed { background-color: var(--feed-color); color: #1b5e20; }
         
-        .btn-wake { 
-            padding: 12px 25px; 
-            background-color: var(--wake-color); 
-            border: none; 
-            border-radius: 10px; 
-            color: #8c7a1a;
-            cursor: pointer; 
-            font-weight: bold; 
-            font-size: 1em;
-            box-shadow: 0 4px 10px rgba(255, 224, 102, 0.4);
-            transition: 0.2s;
+        .action-btn {
+            padding: 12px 25px; border: none; border-radius: 10px; 
+            cursor: pointer; font-weight: bold; font-size: 1em;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); transition: 0.2s;
         }
-        .btn-wake:hover { transform: translateY(-2px); }
+        .action-btn:hover { transform: translateY(-2px); }
 
+        /* LOG LIST */
         .log-list { 
-            background-color: var(--panel-bg); 
-            padding: 20px; 
-            border-radius: 15px; 
-            box-shadow: var(--shadow);
-            border: 1px solid white;
+            background-color: var(--panel-bg); padding: 20px; border-radius: 15px; 
+            box-shadow: var(--shadow); border: 1px solid white;
         }
         .log-list h3 { margin-top: 0; color: var(--secondary); text-align: center;}
-        .log-item { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            padding: 12px 10px; 
-            border-bottom: 2px dashed var(--border); 
-        }
+        .log-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 10px; border-bottom: 2px dashed var(--border); }
         .log-item:last-child { border-bottom: none; }
-        .tag-sleep { color: #7a94de; font-weight: bold; margin-right: 10px; background: rgba(162, 194, 255, 0.2); padding: 4px 8px; border-radius: 6px;}
-        .tag-wake { color: #d1b424; font-weight: bold; margin-right: 10px; background: rgba(255, 224, 102, 0.2); padding: 4px 8px; border-radius: 6px;}
+        
+        .tag { font-weight: bold; margin-right: 10px; padding: 4px 8px; border-radius: 6px; }
+        .tag-sleep { color: #7a94de; background: rgba(162, 194, 255, 0.2); }
+        .tag-wake { color: #d1b424; background: rgba(255, 224, 102, 0.2); }
+        .tag-poop { color: #5d4037; background: rgba(188, 170, 164, 0.3); }
+        .tag-feed { color: #2e7d32; background: rgba(165, 214, 167, 0.3); }
+        
         .delete-btn { 
-            background: var(--secondary); 
-            color: white; 
-            border: none; 
-            border-radius: 8px; 
-            cursor: pointer; 
-            padding: 6px 12px;
-            font-weight: bold;
-            transition: 0.2s;
+            background: var(--secondary); color: white; border: none; border-radius: 8px; 
+            cursor: pointer; padding: 6px 12px; font-weight: bold; transition: 0.2s;
         }
         .delete-btn:hover { background: #ff6b8b; }
+
+        /* GAME STYLES */
+        .game-board {
+            width: 100%; height: 400px; background: rgba(255, 255, 255, 0.5); 
+            border-radius: 15px; position: relative; overflow: hidden;
+            border: 2px dashed var(--secondary); margin-top: 20px;
+        }
+        .game-header { text-align: center; font-size: 1.5em; font-weight: bold; color: var(--secondary); }
+        .game-item {
+            position: absolute; font-size: 3em; cursor: pointer; user-select: none;
+            transition: transform 0.1s; animation: popIn 0.3s ease-out;
+        }
+        .game-item:active { transform: scale(0.8); }
+        @keyframes popIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
+
     </style>
 </head>
 <body>
@@ -314,7 +255,9 @@
         <div class="tabs">
             <button class="tab-btn active" onclick="switchTab('tab1', this)">WiFi Cam</button>
             <button class="tab-btn" onclick="switchTab('tab2', this)">Away Cam</button>
-            <button class="tab-btn" onclick="switchTab('tab3', this)">Puppy Tracker</button>
+            <button class="tab-btn" onclick="switchTab('tab3', this)">Sleep Tracker</button>
+            <button class="tab-btn" onclick="switchTab('tab4', this)">Care Log</button>
+            <button class="tab-btn" onclick="switchTab('tab5', this)">Game</button>
         </div>
 
         <div id="tab1" class="tab-content active">
@@ -330,31 +273,27 @@
 
         <div id="tab3" class="tab-content">
             <div class="tracker-container">
-                
                 <div class="header-controls">
                     <button onclick="changeDay(-1)">&#8592; Prev Day</button>
-                    <h3 id="current-date-display">Day</h3>
+                    <h3 id="current-date-display-sleep">Day</h3>
                     <button onclick="changeDay(1)">Next Day &#8594;</button>
                 </div>
 
                 <div class="stats-card">
-                    <h2 id="stats-title">Day</h2>
+                    <h2 id="stats-title-sleep">Day</h2>
                     <p>Time Slept: <span id="time-slept">0h 0m</span> &nbsp;|&nbsp; Time Awake: <span id="time-awake">0h 0m</span></p>
                     <p>Time Remaining in Day: <span id="time-remaining">0h 0m</span></p>
-                    <div id="current-status">Status: Loading...</div>
+                    <div id="current-status-sleep">Status: Loading...</div>
                 </div>
 
-                <div class="timeline-container" id="main-timeline-container">
-                    <h3>24-Hour Timeline</h3>
-                    
+                <div class="timeline-container" id="main-timeline-container-sleep">
+                    <h3>Sleep Timeline</h3>
                     <div class="timeline-flex">
-                        <div class="timeline-date-col"></div> <!-- Empty spacer to keep main aligned with history dates -->
+                        <div class="timeline-date-col"></div>
                         <div class="timeline-content-col">
                             <div class="timeline-wrapper">
-                                <div class="dynamic-labels" id="dynamic-labels"></div>
-                                
-                                <div class="timeline-bar" id="timeline-bar"></div>
-                                
+                                <div class="dynamic-labels" id="dynamic-labels-sleep"></div>
+                                <div class="timeline-bar" id="timeline-bar-sleep"></div>
                                 <div class="fixed-labels">
                                     <span class="fixed-label" style="left: 0%;">12a</span>
                                     <span class="fixed-label" style="left: 25%;">6a</span>
@@ -366,47 +305,118 @@
                         </div>
                     </div>
 
-                    <!-- 5-Day History View -->
-                    <div class="history-container" id="history-container">
-                        <!-- Javascript will inject 5 rows here -->
-                    </div>
+                    <div class="history-container" id="history-container-sleep"></div>
 
                     <div class="toggle-container">
                         <span>Show History (Past 5 Days)</span>
                         <label class="switch">
-                            <input type="checkbox" id="history-toggle" onchange="toggleHistory()">
+                            <input type="checkbox" id="history-toggle-sleep" onchange="toggleHistory('sleep')">
                             <span class="slider"></span>
                         </label>
                     </div>
-
                 </div>
 
                 <div class="input-group">
                     <div>
                         <label>Enter Time</label>
-                        <input type="time" id="event-time">
+                        <input type="time" id="event-time-sleep">
                     </div>
-                    <button class="btn-sleep" onclick="logEvent('sleep')">Log Sleep</button>
-                    <button class="btn-wake" onclick="logEvent('wake')">Log Wake</button>
+                    <button class="action-btn btn-sleep" onclick="logEvent('sleep', 'sleep')">Log Sleep</button>
+                    <button class="action-btn btn-wake" onclick="logEvent('sleep', 'wake')">Log Wake</button>
                 </div>
 
                 <div class="log-list">
-                    <h3>Raw Event Timeline</h3>
-                    <div id="logs-container"></div>
+                    <h3>Raw Sleep Event Timeline</h3>
+                    <div id="logs-container-sleep"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab4" class="tab-content">
+            <div class="tracker-container">
+                <div class="header-controls">
+                    <button onclick="changeDay(-1)">&#8592; Prev Day</button>
+                    <h3 id="current-date-display-care">Day</h3>
+                    <button onclick="changeDay(1)">Next Day &#8594;</button>
+                </div>
+
+                <div class="stats-card">
+                    <h2 id="stats-title-care">Day</h2>
+                    <p>Total Feeds: <span id="total-feeds">0</span> &nbsp;|&nbsp; Total Poops: <span id="total-poops">0</span></p>
+                </div>
+
+                <div class="timeline-container" id="main-timeline-container-care">
+                    <h3>Care Timeline</h3>
+                    <div class="timeline-flex">
+                        <div class="timeline-date-col"></div>
+                        <div class="timeline-content-col">
+                            <div class="timeline-wrapper">
+                                <div class="dynamic-labels" id="dynamic-labels-care"></div>
+                                <div class="timeline-bar" id="timeline-bar-care"></div>
+                                <div class="fixed-labels">
+                                    <span class="fixed-label" style="left: 0%;">12a</span>
+                                    <span class="fixed-label" style="left: 25%;">6a</span>
+                                    <span class="fixed-label" style="left: 50%;">12p</span>
+                                    <span class="fixed-label" style="left: 75%;">6p</span>
+                                    <span class="fixed-label" style="left: 100%;">12a</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="history-container" id="history-container-care"></div>
+
+                    <div class="toggle-container">
+                        <span>Show History (Past 5 Days)</span>
+                        <label class="switch">
+                            <input type="checkbox" id="history-toggle-care" onchange="toggleHistory('care')">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <div>
+                        <label>Enter Time</label>
+                        <input type="time" id="event-time-care">
+                    </div>
+                    <button class="action-btn btn-feed" onclick="logEvent('care', 'feed')">Track Feed</button>
+                    <button class="action-btn btn-poop" onclick="logEvent('care', 'poop')">Track Poop</button>
+                </div>
+
+                <div class="log-list">
+                    <h3>Raw Care Event Timeline</h3>
+                    <div id="logs-container-care"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab5" class="tab-content">
+            <div class="tracker-container">
+                <div class="stats-card">
+                    <div class="game-header">Feed the Puppy!</div>
+                    <p>Score: <span id="game-score">0</span></p>
+                    <p style="font-size: 0.9em; color: #888;">Tap the treats (🦴, 🥩). Avoid the gross stuff (🧅, 🥒)!</p>
+                    <button class="action-btn btn-sleep" style="margin-top: 10px;" onclick="startGame()">Start Game</button>
+                    
+                    <div class="game-board" id="game-board">
+                        </div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // --- 1. TABS ---
+        // --- 1. GLOBAL STATE & TABS ---
+        let sleepEvents = JSON.parse(localStorage.getItem('puppyTrackerEvents')) || [];
+        let careEvents = JSON.parse(localStorage.getItem('careTrackerEvents')) || [];
+        let viewDate = new Date(); 
+
         function switchTab(tabId, btnElement) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             
-            document.querySelectorAll('iframe').forEach(iframe => {
-                iframe.setAttribute('src', ''); 
-            });
+            document.querySelectorAll('iframe').forEach(iframe => { iframe.setAttribute('src', ''); });
 
             const activeTab = document.getElementById(tabId);
             activeTab.classList.add('active');
@@ -419,70 +429,58 @@
             }
         }
 
-        // --- 2. EVENT-DRIVEN PUPPY TRACKER ---
-        let events = JSON.parse(localStorage.getItem('puppyTrackerEvents')) || [];
-        let viewDate = new Date(); 
-
+        // --- 2. DATA MANAGEMENT ---
         function setCurrentTime() {
             const now = new Date();
             const hh = String(now.getHours()).padStart(2, '0');
             const mm = String(now.getMinutes()).padStart(2, '0');
-            document.getElementById('event-time').value = `${hh}:${mm}`;
+            document.getElementById('event-time-sleep').value = `${hh}:${mm}`;
+            document.getElementById('event-time-care').value = `${hh}:${mm}`;
         }
 
         function changeDay(offset) {
             viewDate.setDate(viewDate.getDate() + offset);
-            updateTrackerUI();
+            updateSleepUI();
+            updateCareUI();
         }
 
-        function logEvent(type) {
-            const timeVal = document.getElementById('event-time').value;
+        function logEvent(trackerType, eventType) {
+            const timeInputId = trackerType === 'sleep' ? 'event-time-sleep' : 'event-time-care';
+            const timeVal = document.getElementById(timeInputId).value;
             if (!timeVal) return alert("Must enter a time.");
             
             const [hours, minutes] = timeVal.split(':').map(Number);
             const eventDate = new Date(viewDate.getFullYear(), viewDate.getMonth(), viewDate.getDate(), hours, minutes);
             
-            events.push({
-                id: Date.now(),
-                type: type, 
-                timestamp: eventDate.getTime()
-            });
-            
-            localStorage.setItem('puppyTrackerEvents', JSON.stringify(events));
-            updateTrackerUI();
-        }
+            const newEvent = { id: Date.now(), type: eventType, timestamp: eventDate.getTime() };
 
-        function deleteEvent(id) {
-            events = events.filter(ev => ev.id !== id);
-            localStorage.setItem('puppyTrackerEvents', JSON.stringify(events));
-            updateTrackerUI();
-        }
-
-        function generateSleepBlocks() {
-            const sortedEvents = [...events].sort((a, b) => a.timestamp - b.timestamp);
-            let blocks = [];
-            let currentSleepStart = null;
-
-            sortedEvents.forEach(ev => {
-                if (ev.type === 'sleep') {
-                    currentSleepStart = ev.timestamp; 
-                } else if (ev.type === 'wake' && currentSleepStart !== null) {
-                    blocks.push({ start: currentSleepStart, end: ev.timestamp }); 
-                    currentSleepStart = null;
-                }
-            });
-
-            if (currentSleepStart !== null) {
-                blocks.push({ start: currentSleepStart, end: null }); 
+            if (trackerType === 'sleep') {
+                sleepEvents.push(newEvent);
+                localStorage.setItem('puppyTrackerEvents', JSON.stringify(sleepEvents));
+                updateSleepUI();
+            } else {
+                careEvents.push(newEvent);
+                localStorage.setItem('careTrackerEvents', JSON.stringify(careEvents));
+                updateCareUI();
             }
-
-            return blocks;
         }
 
-        function toggleHistory() {
-            const container = document.getElementById('main-timeline-container');
-            const histContainer = document.getElementById('history-container');
-            const toggle = document.getElementById('history-toggle');
+        function deleteEvent(trackerType, id) {
+            if (trackerType === 'sleep') {
+                sleepEvents = sleepEvents.filter(ev => ev.id !== id);
+                localStorage.setItem('puppyTrackerEvents', JSON.stringify(sleepEvents));
+                updateSleepUI();
+            } else {
+                careEvents = careEvents.filter(ev => ev.id !== id);
+                localStorage.setItem('careTrackerEvents', JSON.stringify(careEvents));
+                updateCareUI();
+            }
+        }
+
+        function toggleHistory(trackerType) {
+            const container = document.getElementById(`main-timeline-container-${trackerType}`);
+            const histContainer = document.getElementById(`history-container-${trackerType}`);
+            const toggle = document.getElementById(`history-toggle-${trackerType}`);
             
             if (toggle.checked) {
                 container.classList.add('show-history');
@@ -493,197 +491,299 @@
             }
         }
 
-        function updateTrackerUI() {
-            const sleepBlocks = generateSleepBlocks();
+        // --- 3. UI RENDERING: SLEEP ---
+        function updateSleepUI() {
             const now = new Date().getTime();
-
-            // Status Banner
-            const sortedEvents = [...events].sort((a, b) => a.timestamp - b.timestamp);
-            const statusEl = document.getElementById('current-status');
-            if (sortedEvents.length === 0) {
-                statusEl.innerHTML = "Status: No data yet.";
-                statusEl.style.color = "var(--text-color)";
-            } else {
-                const lastEvent = sortedEvents[sortedEvents.length - 1];
-                if (lastEvent.type === 'sleep') {
-                    statusEl.innerHTML = `💤 Status: Sleeping (waiting for awake...)`;
-                    statusEl.style.color = "#7a94de"; 
-                } else {
-                    statusEl.innerHTML = `☀️ Status: Awake`;
-                    statusEl.style.color = "#d1b424"; 
-                }
-            }
-
-            // Calculations Setup
             const dayStart = new Date(viewDate.getFullYear(), viewDate.getMonth(), viewDate.getDate(), 0, 0, 0).getTime();
             const dayEnd = new Date(viewDate.getFullYear(), viewDate.getMonth(), viewDate.getDate(), 23, 59, 59).getTime();
             const totalMsInDay = dayEnd - dayStart;
 
-            const timelineBar = document.getElementById('timeline-bar');
-            const dynamicLabels = document.getElementById('dynamic-labels');
-            timelineBar.innerHTML = ''; 
-            dynamicLabels.innerHTML = '';
+            const sortedEvents = [...sleepEvents].sort((a, b) => a.timestamp - b.timestamp);
+            
+            // Generate Blocks
+            let sleepBlocks = [];
+            let currentStart = null;
+            sortedEvents.forEach(ev => {
+                if (ev.type === 'sleep') currentStart = ev.timestamp; 
+                else if (ev.type === 'wake' && currentStart !== null) {
+                    sleepBlocks.push({ start: currentStart, end: ev.timestamp }); 
+                    currentStart = null;
+                }
+            });
+            if (currentStart !== null) sleepBlocks.push({ start: currentStart, end: null }); 
 
-            // Render 24 hour tick marks inside the bar
+            // Status Map
+            const statusEl = document.getElementById('current-status-sleep');
+            if (sortedEvents.length === 0) {
+                statusEl.innerHTML = "Status: No data yet."; statusEl.style.color = "var(--text-color)";
+            } else {
+                const lastEvent = sortedEvents[sortedEvents.length - 1];
+                if (lastEvent.type === 'sleep') {
+                    statusEl.innerHTML = `💤 Status: Sleeping (waiting for awake...)`; statusEl.style.color = "#7a94de"; 
+                } else {
+                    statusEl.innerHTML = `☀️ Status: Awake`; statusEl.style.color = "#d1b424"; 
+                }
+            }
+
+            // Timeline Setup
+            const timelineBar = document.getElementById('timeline-bar-sleep');
+            const dynamicLabels = document.getElementById('dynamic-labels-sleep');
+            timelineBar.innerHTML = ''; dynamicLabels.innerHTML = '';
+
             for (let i = 0; i <= 24; i++) {
                 const tick = document.createElement('div');
-                tick.className = 'hour-tick';
-                tick.style.left = `${(i / 24) * 100}%`;
+                tick.className = 'hour-tick'; tick.style.left = `${(i / 24) * 100}%`;
                 timelineBar.appendChild(tick);
             }
 
-            // Render Dynamic Logged Events (Numbers over the bar)
             sortedEvents.forEach(ev => {
                 if (ev.timestamp >= dayStart && ev.timestamp <= dayEnd) {
                     const evDate = new Date(ev.timestamp);
-                    let hourNumber = evDate.getHours() % 12;
-                    if (hourNumber === 0) hourNumber = 12; 
-                    
+                    let hourNumber = evDate.getHours() % 12 || 12; 
                     const leftPercentage = ((ev.timestamp - dayStart) / totalMsInDay) * 100;
                     
                     const label = document.createElement('span');
-                    label.className = 'dynamic-label';
-                    label.style.left = `${leftPercentage}%`;
-                    label.innerText = hourNumber;
-                    label.style.color = ev.type === 'sleep' ? '#7a94de' : '#d1b424';
-                    
+                    label.className = 'dynamic-label'; label.style.left = `${leftPercentage}%`;
+                    label.innerText = hourNumber; label.style.color = ev.type === 'sleep' ? '#7a94de' : '#d1b424';
                     dynamicLabels.appendChild(label);
                 }
             });
 
-            // Render Main Sleep Blocks
             let dailySleepMs = 0;
             sleepBlocks.forEach(block => {
-                const blockStart = block.start;
-                const blockEnd = block.end ? block.end : now; 
-
-                const overlapStart = Math.max(blockStart, dayStart);
+                const blockEnd = block.end || now; 
+                const overlapStart = Math.max(block.start, dayStart);
                 const overlapEnd = Math.min(blockEnd, dayEnd);
 
                 if (overlapStart < overlapEnd) {
                     dailySleepMs += (overlapEnd - overlapStart);
-
                     const leftPercentage = ((overlapStart - dayStart) / totalMsInDay) * 100;
                     const widthPercentage = ((overlapEnd - overlapStart) / totalMsInDay) * 100;
-
                     const visualBlock = document.createElement('div');
                     visualBlock.className = 'timeline-sleep-block';
-                    visualBlock.style.left = `${leftPercentage}%`;
-                    visualBlock.style.width = `${widthPercentage}%`;
+                    visualBlock.style.left = `${leftPercentage}%`; visualBlock.style.width = `${widthPercentage}%`;
                     timelineBar.appendChild(visualBlock);
                 }
             });
 
-            const sleepHrs = Math.floor(dailySleepMs / (1000 * 60 * 60));
-            const sleepMins = Math.floor((dailySleepMs % (1000 * 60 * 60)) / (1000 * 60));
-
-            // Awake time calculation
-            let timeElapsedMs = 0;
-            if (dayStart <= now) {
-                timeElapsedMs = Math.min(now, dayEnd) - dayStart;
-            }
+            // Math
+            const sleepHrs = Math.floor(dailySleepMs / 3600000);
+            const sleepMins = Math.floor((dailySleepMs % 3600000) / 60000);
+            let timeElapsedMs = dayStart <= now ? Math.min(now, dayEnd) - dayStart : 0;
             const awakeMs = Math.max(0, timeElapsedMs - dailySleepMs);
-            const awakeHrs = Math.floor(awakeMs / (1000 * 60 * 60));
-            const awakeMins = Math.floor((awakeMs % (1000 * 60 * 60)) / (1000 * 60));
+            const awakeHrs = Math.floor(awakeMs / 3600000);
+            const awakeMins = Math.floor((awakeMs % 3600000) / 60000);
+            let timeRemainingMs = (dayEnd > now && dayStart <= now) ? dayEnd - now : (dayStart > now ? 86400000 : 0); 
+            const remHrs = Math.floor(timeRemainingMs / 3600000);
+            const remMins = Math.floor((timeRemainingMs % 3600000) / 60000);
 
-            // Time remaining
-            let timeRemainingMs = 0;
-            if (dayEnd > now && dayStart <= now) {
-                timeRemainingMs = dayEnd - now; 
-            } else if (dayStart > now) {
-                timeRemainingMs = 24 * 60 * 60 * 1000; 
-            } 
-
-            const remHrs = Math.floor(timeRemainingMs / (1000 * 60 * 60));
-            const remMins = Math.floor((timeRemainingMs % (1000 * 60 * 60)) / (1000 * 60));
-
-            // Update UI Text
+            // Update Text
             const options = { weekday: 'long', month: 'numeric', day: 'numeric', year: '2-digit' };
-            document.getElementById('current-date-display').innerText = viewDate.toLocaleDateString();
-            document.getElementById('stats-title').innerText = `Day (${viewDate.toLocaleDateString('en-US', options)})`;
+            document.getElementById('current-date-display-sleep').innerText = viewDate.toLocaleDateString();
+            document.getElementById('stats-title-sleep').innerText = `Day (${viewDate.toLocaleDateString('en-US', options)})`;
             document.getElementById('time-slept').innerText = `${sleepHrs}h ${sleepMins}m`;
             document.getElementById('time-awake').innerText = `${awakeHrs}h ${awakeMins}m`;
             document.getElementById('time-remaining').innerText = `${remHrs}h ${remMins}m`;
 
-            // --- RENDER 5-DAY HISTORY ---
-            const histContainer = document.getElementById('history-container');
+            // History
+            const histContainer = document.getElementById('history-container-sleep');
             histContainer.innerHTML = '';
-            
             for(let i = 1; i <= 5; i++) {
-                const pastDate = new Date(viewDate);
-                pastDate.setDate(viewDate.getDate() - i);
-                
-                const pStart = new Date(pastDate.getFullYear(), pastDate.getMonth(), pastDate.getDate(), 0, 0, 0).getTime();
-                const pEnd = new Date(pastDate.getFullYear(), pastDate.getMonth(), pastDate.getDate(), 23, 59, 59).getTime();
+                const pDate = new Date(viewDate); pDate.setDate(viewDate.getDate() - i);
+                const pStart = new Date(pDate.getFullYear(), pDate.getMonth(), pDate.getDate(), 0, 0, 0).getTime();
+                const pEnd = new Date(pDate.getFullYear(), pDate.getMonth(), pDate.getDate(), 23, 59, 59).getTime();
                 const pTotalMs = pEnd - pStart;
                 
-                // Outer Flex Row (Matches main timeline styling for alignment)
-                const row = document.createElement('div');
-                row.className = 'timeline-flex';
+                const row = document.createElement('div'); row.className = 'timeline-flex';
+                const dateCol = document.createElement('div'); dateCol.className = 'timeline-date-col'; dateCol.innerText = `${pDate.getMonth()+1}/${pDate.getDate()}`;
+                const contentCol = document.createElement('div'); contentCol.className = 'timeline-content-col';
+                const track = document.createElement('div'); track.className = 'history-track';
                 
-                // Date Column
-                const dateCol = document.createElement('div');
-                dateCol.className = 'timeline-date-col';
-                dateCol.innerText = `${pastDate.getMonth()+1}/${pastDate.getDate()}`;
-                
-                // Track Column
-                const contentCol = document.createElement('div');
-                contentCol.className = 'timeline-content-col';
-                
-                const track = document.createElement('div');
-                track.className = 'history-track';
-                
-                // Calculate blocks for this past day
                 sleepBlocks.forEach(block => {
-                    const bStart = block.start;
-                    const bEnd = block.end ? block.end : now; 
-                    const overStart = Math.max(bStart, pStart);
-                    const overEnd = Math.min(bEnd, pEnd);
-
+                    const overStart = Math.max(block.start, pStart);
+                    const overEnd = Math.min(block.end || now, pEnd);
                     if (overStart < overEnd) {
                         const leftPct = ((overStart - pStart) / pTotalMs) * 100;
                         const widthPct = ((overEnd - overStart) / pTotalMs) * 100;
-
-                        const visBlock = document.createElement('div');
-                        visBlock.className = 'history-sleep-block';
-                        visBlock.style.left = `${leftPct}%`;
-                        visBlock.style.width = `${widthPct}%`;
+                        const visBlock = document.createElement('div'); visBlock.className = 'history-sleep-block';
+                        visBlock.style.left = `${leftPct}%`; visBlock.style.width = `${widthPct}%`;
                         track.appendChild(visBlock);
                     }
                 });
-                
-                contentCol.appendChild(track);
-                row.appendChild(dateCol);
-                row.appendChild(contentCol);
+                contentCol.appendChild(track); row.appendChild(dateCol); row.appendChild(contentCol);
                 histContainer.appendChild(row);
             }
 
-            // Render Raw Events list
-            const container = document.getElementById('logs-container');
+            // Raw Logs
+            const container = document.getElementById('logs-container-sleep');
             container.innerHTML = '';
-            const filteredEvents = sortedEvents.filter(ev => ev.timestamp >= dayStart && ev.timestamp <= dayEnd);
-            const descendingEvents = [...filteredEvents].reverse(); 
-            
-            descendingEvents.forEach(ev => {
+            const filtered = sortedEvents.filter(ev => ev.timestamp >= dayStart && ev.timestamp <= dayEnd).reverse(); 
+            filtered.forEach(ev => {
                 const timeStr = new Date(ev.timestamp).toLocaleString([], {month: 'numeric', day: 'numeric', hour: '2-digit', minute:'2-digit'});
-                const tagClass = ev.type === 'sleep' ? 'tag-sleep' : 'tag-wake';
-                const tagText = ev.type === 'sleep' ? 'SLEPT' : 'WOKE UP';
-                
+                const isSleep = ev.type === 'sleep';
                 container.innerHTML += `
                     <div class="log-item">
-                        <div>
-                            <span class="${tagClass}">${tagText}</span>
-                            <span>${timeStr}</span>
-                        </div>
-                        <button class="delete-btn" onclick="deleteEvent(${ev.id})">Delete</button>
-                    </div>
-                `;
+                        <div><span class="tag ${isSleep ? 'tag-sleep' : 'tag-wake'}">${isSleep ? 'SLEPT' : 'WOKE UP'}</span><span>${timeStr}</span></div>
+                        <button class="delete-btn" onclick="deleteEvent('sleep', ${ev.id})">Delete</button>
+                    </div>`;
             });
         }
 
+        // --- 4. UI RENDERING: CARE (POOP/FEED) ---
+        function updateCareUI() {
+            const dayStart = new Date(viewDate.getFullYear(), viewDate.getMonth(), viewDate.getDate(), 0, 0, 0).getTime();
+            const dayEnd = new Date(viewDate.getFullYear(), viewDate.getMonth(), viewDate.getDate(), 23, 59, 59).getTime();
+            const totalMsInDay = dayEnd - dayStart;
+
+            const sortedEvents = [...careEvents].sort((a, b) => a.timestamp - b.timestamp);
+            const eventsToday = sortedEvents.filter(ev => ev.timestamp >= dayStart && ev.timestamp <= dayEnd);
+
+            // Timeline Setup
+            const timelineBar = document.getElementById('timeline-bar-care');
+            const dynamicLabels = document.getElementById('dynamic-labels-care');
+            timelineBar.innerHTML = ''; dynamicLabels.innerHTML = '';
+
+            for (let i = 0; i <= 24; i++) {
+                const tick = document.createElement('div');
+                tick.className = 'hour-tick'; tick.style.left = `${(i / 24) * 100}%`;
+                timelineBar.appendChild(tick);
+            }
+
+            let feedCount = 0; let poopCount = 0;
+
+            eventsToday.forEach(ev => {
+                if (ev.type === 'feed') feedCount++;
+                if (ev.type === 'poop') poopCount++;
+
+                const evDate = new Date(ev.timestamp);
+                let hourNumber = evDate.getHours() % 12 || 12; 
+                const leftPercentage = ((ev.timestamp - dayStart) / totalMsInDay) * 100;
+                
+                // Draw Label
+                const label = document.createElement('span');
+                label.className = 'dynamic-label'; label.style.left = `${leftPercentage}%`;
+                label.innerText = hourNumber; label.style.color = ev.type === 'poop' ? 'var(--poop-color)' : 'var(--feed-color)';
+                dynamicLabels.appendChild(label);
+
+                // Draw Tick Mark instead of block
+                const tickMark = document.createElement('div');
+                tickMark.className = 'timeline-care-tick';
+                tickMark.style.left = `${leftPercentage}%`;
+                tickMark.style.backgroundColor = ev.type === 'poop' ? 'var(--poop-color)' : 'var(--feed-color)';
+                timelineBar.appendChild(tickMark);
+            });
+
+            // Update Text
+            const options = { weekday: 'long', month: 'numeric', day: 'numeric', year: '2-digit' };
+            document.getElementById('current-date-display-care').innerText = viewDate.toLocaleDateString();
+            document.getElementById('stats-title-care').innerText = `Day (${viewDate.toLocaleDateString('en-US', options)})`;
+            document.getElementById('total-feeds').innerText = feedCount;
+            document.getElementById('total-poops').innerText = poopCount;
+
+            // History
+            const histContainer = document.getElementById('history-container-care');
+            histContainer.innerHTML = '';
+            for(let i = 1; i <= 5; i++) {
+                const pDate = new Date(viewDate); pDate.setDate(viewDate.getDate() - i);
+                const pStart = new Date(pDate.getFullYear(), pDate.getMonth(), pDate.getDate(), 0, 0, 0).getTime();
+                const pEnd = new Date(pDate.getFullYear(), pDate.getMonth(), pDate.getDate(), 23, 59, 59).getTime();
+                const pTotalMs = pEnd - pStart;
+                
+                const row = document.createElement('div'); row.className = 'timeline-flex';
+                const dateCol = document.createElement('div'); dateCol.className = 'timeline-date-col'; dateCol.innerText = `${pDate.getMonth()+1}/${pDate.getDate()}`;
+                const contentCol = document.createElement('div'); contentCol.className = 'timeline-content-col';
+                const track = document.createElement('div'); track.className = 'history-track';
+                
+                sortedEvents.forEach(ev => {
+                    if(ev.timestamp >= pStart && ev.timestamp <= pEnd) {
+                        const leftPct = ((ev.timestamp - pStart) / pTotalMs) * 100;
+                        const visBlock = document.createElement('div'); 
+                        visBlock.className = 'history-care-tick';
+                        visBlock.style.left = `${leftPct}%`; 
+                        visBlock.style.backgroundColor = ev.type === 'poop' ? 'var(--poop-color)' : 'var(--feed-color)';
+                        track.appendChild(visBlock);
+                    }
+                });
+                contentCol.appendChild(track); row.appendChild(dateCol); row.appendChild(contentCol);
+                histContainer.appendChild(row);
+            }
+
+            // Raw Logs
+            const container = document.getElementById('logs-container-care');
+            container.innerHTML = '';
+            [...eventsToday].reverse().forEach(ev => {
+                const timeStr = new Date(ev.timestamp).toLocaleString([], {month: 'numeric', day: 'numeric', hour: '2-digit', minute:'2-digit'});
+                const isPoop = ev.type === 'poop';
+                container.innerHTML += `
+                    <div class="log-item">
+                        <div><span class="tag ${isPoop ? 'tag-poop' : 'tag-feed'}">${isPoop ? 'POOPED' : 'FED'}</span><span>${timeStr}</span></div>
+                        <button class="delete-btn" onclick="deleteEvent('care', ${ev.id})">Delete</button>
+                    </div>`;
+            });
+        }
+
+        // --- 5. GAME LOGIC ---
+        let gameScore = 0;
+        let gameActive = false;
+        let gameTimer = null;
+        
+        function startGame() {
+            if(gameActive) return;
+            gameActive = true;
+            gameScore = 0;
+            document.getElementById('game-score').innerText = gameScore;
+            const board = document.getElementById('game-board');
+            board.innerHTML = '';
+            spawnItem();
+        }
+
+        function spawnItem() {
+            if(!gameActive) return;
+            const board = document.getElementById('game-board');
+            const item = document.createElement('div');
+            item.className = 'game-item';
+            
+            // Randomly pick a good treat or a gross item 
+            const isBad = Math.random() > 0.7; 
+            item.innerText = isBad ? (Math.random() > 0.5 ? '🧅' : '🥒') : (Math.random() > 0.5 ? '🦴' : '🥩');
+            
+            // Random position (keeping inside borders)
+            item.style.left = Math.floor(Math.random() * 80) + '%';
+            item.style.top = Math.floor(Math.random() * 80) + '%';
+            
+            item.onclick = () => {
+                if(isBad) {
+                    endGame();
+                } else {
+                    gameScore++;
+                    document.getElementById('game-score').innerText = gameScore;
+                    item.remove();
+                }
+            };
+            
+            board.appendChild(item);
+            
+            // Despawn after 1.5 seconds if not clicked
+            setTimeout(() => {
+                if(item.parentElement) item.remove();
+            }, 1500);
+            
+            // Spawn next item faster as score goes up
+            const nextSpawnDelay = Math.max(400, 1000 - (gameScore * 20));
+            setTimeout(spawnItem, nextSpawnDelay);
+        }
+
+        function endGame() {
+            gameActive = false;
+            const board = document.getElementById('game-board');
+            board.innerHTML = `<div style="text-align:center; padding-top: 40%; color: var(--text-color); font-weight: bold; font-size: 1.2em;">Bleh! 🤢 Game Over!<br>Score: ${gameScore}</div>`;
+        }
+
+        // Initialization
         setCurrentTime();
-        updateTrackerUI();
-        setInterval(updateTrackerUI, 60000);
+        updateSleepUI();
+        updateCareUI();
+        setInterval(() => { updateSleepUI(); updateCareUI(); }, 60000);
 
     </script>
 </body>
