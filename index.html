@@ -6,74 +6,236 @@
     <title>Master Dashboard</title>
     <style>
         :root {
-            --bg-color: #1e1e2e;
-            --panel-bg: #282a36;
-            --text-color: #f8f8f2;
-            --primary: #bd93f9;
-            --secondary: #ff79c6;
-            --border: #44475a;
-            --sleep-color: #8be9fd;
-            --wake-color: #f1fa8c;
+            /* Pastel Pink & Cute Theme Variables */
+            --bg-color: #fff0f3;
+            --panel-bg: rgba(255, 255, 255, 0.85); /* Slightly transparent white for a soft look */
+            --text-color: #5c4a4d; /* Soft brown-grey for readable but gentle text */
+            --primary: #ffb6c1; /* Classic pastel pink */
+            --secondary: #ff85a2; /* Slightly deeper pink for contrast */
+            --border: #ffc2d1; /* Very soft pink border */
+            --sleep-color: #a2c2ff; /* Pastel baby blue for sleep */
+            --wake-color: #ffe066; /* Warm pastel yellow for wake */
+            --shadow: 0 8px 20px rgba(255, 182, 193, 0.25); /* Soft pink drop shadow */
         }
+        
         body, html {
             margin: 0; padding: 0; height: 100%;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color); color: var(--text-color);
+            background-color: var(--bg-color); 
+            color: var(--text-color);
+            /* Cute repeating pawprint SVG background */
+            background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffc2d1' opacity='0.35'%3E%3Ccircle cx='18' cy='45' r='9'/%3E%3Ccircle cx='35' cy='25' r='9'/%3E%3Ccircle cx='65' cy='25' r='9'/%3E%3Ccircle cx='82' cy='45' r='9'/%3E%3Cpath d='M 25 65 C 25 50 40 45 50 45 C 60 45 75 50 75 65 C 75 80 65 90 50 90 C 35 90 25 80 25 65 Z'/%3E%3C/g%3E%3C/svg%3E");
         }
         
         #dashboard { display: flex; height: 100%; flex-direction: column; }
+        
         .tabs {
-            display: flex; background-color: var(--panel-bg); padding: 10px; gap: 10px;
+            display: flex; 
+            background-color: rgba(255, 255, 255, 0.9); 
+            padding: 15px; 
+            gap: 10px;
             border-bottom: 2px solid var(--border);
+            box-shadow: 0 2px 10px rgba(255, 182, 193, 0.2);
+            backdrop-filter: blur(5px);
         }
+        
         .tab-btn {
-            padding: 10px 20px; background-color: transparent; color: var(--text-color);
-            border: 1px solid var(--border); border-radius: 5px; cursor: pointer; transition: 0.2s;
+            padding: 10px 20px; 
+            background-color: #ffffff; 
+            color: var(--text-color);
+            border: 2px solid var(--border); 
+            border-radius: 20px; /* Pill shape for cuteness */
+            cursor: pointer; 
+            transition: all 0.3s ease;
+            font-weight: bold;
         }
-        .tab-btn.active { background-color: var(--primary); border-color: var(--primary); }
+        
+        .tab-btn:hover {
+            background-color: var(--bg-color);
+        }
+        
+        .tab-btn.active { 
+            background-color: var(--primary); 
+            border-color: var(--primary); 
+            color: #ffffff;
+            box-shadow: 0 4px 10px rgba(255, 182, 193, 0.4);
+        }
+        
         .tab-content { display: none; flex-grow: 1; height: 100%; overflow-y: auto;}
         .tab-content.active { display: flex; flex-direction: column; }
         iframe { width: 100%; height: 100%; border: none; }
 
         .tracker-container { padding: 20px; max-width: 800px; margin: 0 auto; width: 100%; box-sizing: border-box; }
-        .header-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .header-controls button { background-color: var(--panel-bg); color: var(--text-color); border: 1px solid var(--border); padding: 5px 15px; border-radius: 5px; cursor: pointer; }
         
-        .stats-card { background-color: var(--panel-bg); padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 20px; position: relative;}
-        .stats-card h2 { margin: 0 0 10px 0; }
-        .stats-card p { font-size: 1.2em; margin: 5px 0; color: var(--secondary); }
-        #current-status { margin-top: 15px; font-weight: bold; padding: 10px; border-radius: 5px; background: rgba(0,0,0,0.2); }
+        .header-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .header-controls button { 
+            background-color: var(--panel-bg); 
+            color: var(--text-color); 
+            border: 2px solid var(--border); 
+            padding: 8px 18px; 
+            border-radius: 20px; 
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+        .header-controls button:hover {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .stats-card { 
+            background-color: var(--panel-bg); 
+            padding: 20px; 
+            border-radius: 15px; 
+            text-align: center; 
+            margin-bottom: 20px; 
+            position: relative;
+            box-shadow: var(--shadow);
+            border: 1px solid white;
+            backdrop-filter: blur(5px);
+        }
+        .stats-card h2 { margin: 0 0 10px 0; color: var(--secondary); }
+        .stats-card p { font-size: 1.2em; margin: 5px 0; font-weight: 500; }
+        #current-status { 
+            margin-top: 15px; 
+            font-weight: bold; 
+            padding: 10px; 
+            border-radius: 10px; 
+            background: rgba(255, 182, 193, 0.2); 
+        }
         
         /* NEW TIMELINE STYLES */
-        .timeline-container { background-color: var(--panel-bg); padding: 20px; border-radius: 8px; margin-bottom: 20px; }
-        .timeline-container h3 { margin-top: 0; margin-bottom: 10px; text-align: center;}
+        .timeline-container { 
+            background-color: var(--panel-bg); 
+            padding: 20px; 
+            border-radius: 15px; 
+            margin-bottom: 20px; 
+            box-shadow: var(--shadow);
+            border: 1px solid white;
+        }
+        .timeline-container h3 { margin-top: 0; margin-bottom: 10px; text-align: center; color: var(--secondary);}
         
         .timeline-wrapper { position: relative; margin-top: 15px; margin-bottom: 15px; }
         
         .dynamic-labels { position: relative; height: 20px; width: 100%; }
-        .dynamic-label { position: absolute; transform: translateX(-50%); font-size: 0.85em; font-weight: bold; bottom: 2px; text-shadow: 1px 1px 2px #000; z-index: 5;}
+        .dynamic-label { 
+            position: absolute; 
+            transform: translateX(-50%); 
+            font-size: 0.85em; 
+            font-weight: bold; 
+            bottom: 2px; 
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.8); /* Lightened text shadow */
+            z-index: 5;
+        }
         
-        .timeline-bar { position: relative; height: 35px; background-color: rgba(0,0,0,0.4); border-radius: 6px; margin: 5px 0; }
-        .timeline-sleep-block { position: absolute; height: 100%; top: 0; background-color: var(--sleep-color); opacity: 0.85; border-radius: 4px; z-index: 1;}
-        .hour-tick { position: absolute; bottom: 0; width: 1px; height: 8px; background-color: rgba(255,255,255,0.3); z-index: 2; }
+        .timeline-bar { 
+            position: relative; 
+            height: 35px; 
+            background-color: rgba(255, 182, 193, 0.3); /* Soft pink track */
+            border-radius: 10px; 
+            margin: 5px 0; 
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .timeline-sleep-block { 
+            position: absolute; 
+            height: 100%; 
+            top: 0; 
+            background-color: var(--sleep-color); 
+            opacity: 0.9; 
+            border-radius: 8px; 
+            z-index: 1;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .hour-tick { position: absolute; bottom: 0; width: 2px; height: 8px; background-color: rgba(255, 255, 255, 0.8); z-index: 2; border-radius: 2px;}
         
-        .fixed-labels { position: relative; height: 20px; width: 100%; font-size: 0.75em; color: #888; font-weight: bold;}
+        .fixed-labels { position: relative; height: 20px; width: 100%; font-size: 0.75em; color: #999; font-weight: bold;}
         .fixed-label { position: absolute; transform: translateX(-50%); }
 
-        .input-group { background-color: var(--panel-bg); padding: 20px; border-radius: 8px; margin-bottom: 20px; display: flex; gap: 15px; flex-wrap: wrap; align-items: flex-end; justify-content: center;}
+        .input-group { 
+            background-color: var(--panel-bg); 
+            padding: 20px; 
+            border-radius: 15px; 
+            margin-bottom: 20px; 
+            display: flex; 
+            gap: 15px; 
+            flex-wrap: wrap; 
+            align-items: flex-end; 
+            justify-content: center;
+            box-shadow: var(--shadow);
+            border: 1px solid white;
+        }
         .input-group div { display: flex; flex-direction: column; }
-        .input-group label { margin-bottom: 5px; font-size: 0.9em; text-align: center;}
-        .input-group input { padding: 10px; background: var(--bg-color); color: var(--text-color); border: 1px solid var(--border); border-radius: 4px; color-scheme: dark; font-size: 1.1em;}
-        .btn-sleep { padding: 12px 20px; background-color: var(--sleep-color); border: none; border-radius: 4px; color: #000; cursor: pointer; font-weight: bold; font-size: 1em;}
-        .btn-wake { padding: 12px 20px; background-color: var(--wake-color); border: none; border-radius: 4px; color: #000; cursor: pointer; font-weight: bold; font-size: 1em;}
+        .input-group label { margin-bottom: 5px; font-size: 0.9em; text-align: center; font-weight: bold; color: var(--secondary);}
+        .input-group input { 
+            padding: 10px; 
+            background: #ffffff; 
+            color: var(--text-color); 
+            border: 2px solid var(--border); 
+            border-radius: 10px; 
+            color-scheme: light; 
+            font-size: 1.1em;
+            outline: none;
+        }
+        .input-group input:focus { border-color: var(--secondary); }
+        
+        .btn-sleep { 
+            padding: 12px 25px; 
+            background-color: var(--sleep-color); 
+            border: none; 
+            border-radius: 10px; 
+            color: #4a5c96; /* Darker blue for readable contrast */
+            cursor: pointer; 
+            font-weight: bold; 
+            font-size: 1em;
+            box-shadow: 0 4px 10px rgba(162, 194, 255, 0.4);
+            transition: 0.2s;
+        }
+        .btn-sleep:hover { transform: translateY(-2px); }
+        
+        .btn-wake { 
+            padding: 12px 25px; 
+            background-color: var(--wake-color); 
+            border: none; 
+            border-radius: 10px; 
+            color: #8c7a1a; /* Darker yellow/brown for readable contrast */
+            cursor: pointer; 
+            font-weight: bold; 
+            font-size: 1em;
+            box-shadow: 0 4px 10px rgba(255, 224, 102, 0.4);
+            transition: 0.2s;
+        }
+        .btn-wake:hover { transform: translateY(-2px); }
 
-        .log-list { background-color: var(--panel-bg); padding: 20px; border-radius: 8px; }
-        .log-list h3 { margin-top: 0; }
-        .log-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid var(--border); }
+        .log-list { 
+            background-color: var(--panel-bg); 
+            padding: 20px; 
+            border-radius: 15px; 
+            box-shadow: var(--shadow);
+            border: 1px solid white;
+        }
+        .log-list h3 { margin-top: 0; color: var(--secondary); text-align: center;}
+        .log-item { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 12px 10px; 
+            border-bottom: 2px dashed var(--border); 
+        }
         .log-item:last-child { border-bottom: none; }
-        .tag-sleep { color: var(--sleep-color); font-weight: bold; margin-right: 10px;}
-        .tag-wake { color: var(--wake-color); font-weight: bold; margin-right: 10px;}
-        .delete-btn { background: #ff5555; color: white; border: none; border-radius: 3px; cursor: pointer; padding: 5px 10px;}
+        .tag-sleep { color: #7a94de; font-weight: bold; margin-right: 10px; background: rgba(162, 194, 255, 0.2); padding: 4px 8px; border-radius: 6px;}
+        .tag-wake { color: #d1b424; font-weight: bold; margin-right: 10px; background: rgba(255, 224, 102, 0.2); padding: 4px 8px; border-radius: 6px;}
+        .delete-btn { 
+            background: var(--secondary); 
+            color: white; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            padding: 6px 12px;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+        .delete-btn:hover { background: #ff6b8b; }
     </style>
 </head>
 <body>
@@ -238,10 +400,10 @@
                 const lastEvent = sortedEvents[sortedEvents.length - 1];
                 if (lastEvent.type === 'sleep') {
                     statusEl.innerHTML = `💤 Status: Sleeping (waiting for awake...)`;
-                    statusEl.style.color = "var(--sleep-color)";
+                    statusEl.style.color = "#7a94de"; // Slightly darker blue for light theme
                 } else {
                     statusEl.innerHTML = `☀️ Status: Awake`;
-                    statusEl.style.color = "var(--wake-color)";
+                    statusEl.style.color = "#d1b424"; // Slightly darker yellow for light theme
                 }
             }
 
@@ -278,7 +440,7 @@
                     label.style.left = `${leftPercentage}%`;
                     label.innerText = hourNumber;
                     // Color code it based on sleep vs wake
-                    label.style.color = ev.type === 'sleep' ? 'var(--sleep-color)' : 'var(--wake-color)';
+                    label.style.color = ev.type === 'sleep' ? '#7a94de' : '#d1b424';
                     
                     dynamicLabels.appendChild(label);
                 }
